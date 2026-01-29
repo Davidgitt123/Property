@@ -1,3 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Moul&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Base styles with font families */
+body {
+    font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+    @apply bg-light text-dark;
+}
+
+/* Khmer font class */
+.font-khmer {
+    font-family: 'Moul', 'Kantumruy Pro', sans-serif;
+}
+
+/* Custom color classes */
+.bg-dark {
+    background-color: #132d4c;
+}
+
+.text-dark {
+    color: #132d4c;
+}
+
+.bg-primary {
+    background-color: #00d9ff;
+}
+
+.text-primary {
+    color: #00d9ff;
+}
+
+.bg-accent {
+    background-color: #fd8a8a;
+}
+
+.text-accent {
+    color: #fd8a8a;
+}
+
+.border-primary {
+    border-color: #00d9ff;
+}
+
+.border-accent {
+    border-color: #fd8a8a;
+}
+
+/* Button styles */
+.btn-primary {
+    @apply bg-primary hover:bg-primary-dark text-white font-medium py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+}
+
+.btn-accent {
+    @apply bg-accent hover:bg-accent-dark text-white font-medium py-2 px-6 rounded-lg transition-all duration-300 transform hover:scale-105;
+}
+
+.btn-outline-primary {
+    @apply border-2 border-primary text-primary hover:bg-primary hover:text-white font-medium py-2 px-6 rounded-lg transition-all duration-300;
+}
+
+/* Custom gradients */
+.gradient-dark {
+    background: linear-gradient(135deg, #132d4c 0%, #1a3a5f 100%);
+}
+
+.gradient-primary {
+    background: linear-gradient(135deg, #00d9ff 0%, #05b5f5 100%);
+}
+
+.gradient-accent {
+    background: linear-gradient(135deg, #fd8a8a 0%, #fd7272 100%);
+}
+
+/* Smooth transitions */
+* {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom shadows */
+.shadow-soft {
+    box-shadow: 0 4px 20px rgba(19, 45, 76, 0.1);
+}
+
+.shadow-dark {
+    box-shadow: 0 4px 20px rgba(19, 45, 76, 0.2);
+}
+
+/* Glass effect */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-effect-dark {
+    background: rgba(19, 45, 76, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+/* Form Styles */
+.form-input {
+    @apply border-gray-300 focus:border-primary focus:ring-primary rounded-lg shadow-sm;
+}
+
+.form-checkbox {
+    @apply text-primary border-gray-300 rounded focus:ring-primary;
+}
+
+.form-select {
+    @apply border-gray-300 focus:border-primary focus:ring-primary rounded-lg;
+}
+
+/* Login/Register specific */
+.auth-card {
+    @apply bg-light rounded-2xl shadow-soft border border-gray-200;
+}
+
+.auth-divider {
+    @apply relative my-8;
+}
+
+.auth-divider::before {
+    @apply absolute inset-0 flex items-center;
+    content: '';
+}
+
+.auth-divider span {
+    @apply relative bg-light px-4 text-gray-500;
+}
+
+/* Social buttons */
+.social-btn {
+    @apply w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200;
+}

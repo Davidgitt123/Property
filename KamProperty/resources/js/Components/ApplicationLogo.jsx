@@ -4,9 +4,9 @@ export default function ApplicationLogo({ className }) {
     return (
         <div className={`flex items-center ${className}`}>
             <img 
-                src="/KAM.gif" 
+                src="/KamWhite.png" 
                 alt="KamProperty Logo" 
-                className="h-30 w-auto mt-40"
+                className="h-28 w-auto"
             />
             <span className="mt-2 ml-2 text-xl font-bold text-gray-800"></span>
         </div>
@@ -17,9 +17,9 @@ export default function ApplicationLogo({ className }) {
 export function ApplicationLogoIcon({ className }) {
     return (
         <img 
-            src="/KAM.gif" 
+            src="/KamBlack.png" 
             alt="KamProperty" 
-            className={`h-10 w-auto ${className}`}
+            className={`h-20 w-auto ${className}`}
         />
     );
 }

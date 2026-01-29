@@ -9,18 +9,24 @@ use Inertia\Inertia;
 class DashboardController extends Controller
 {
     public function index()
-    {
-        $user = auth()->user();
-        
-        $stats = [
-            'total_properties' => Property::count(),
-            'for_sale' => Property::forSale()->count(),
-            'for_rent' => Property::forRent()->count(),
-            'total_users' => User::count(),
-        ];
-
-        return Inertia::render('Dashboard', [
-            'stats' => $stats,
-        ]);
+{
+    $user = auth()->user();
+    
+    // Redirect regular users to homepage
+    if ($user->role === 'user') {
+        return redirect()->route('homepage');
     }
+    
+    // Show admin/agent dashboard
+    $stats = [
+        'total_properties' => Property::count(),
+        'for_sale' => Property::forSale()->count(),
+        'for_rent' => Property::forRent()->count(),
+        'total_users' => User::count(),
+    ];
+
+    return Inertia::render('Dashboard', [
+        'stats' => $stats,
+    ]);
+}
 }

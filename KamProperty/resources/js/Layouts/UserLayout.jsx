@@ -1,83 +1,80 @@
 import React, { useState } from 'react';
-import ApplicationLogoIcon from '@/Components/ApplicationLogo';
+import ApplicationLogo from '@/Components/ApplicationLogo';
 import Dropdown from '@/Components/Dropdown';
 import NavLink from '@/Components/NavLink';
 import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
+import LanguageSwitcher from '@/Components/LanguageSwitcher';
 import { Link } from '@inertiajs/react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
-export default function AuthenticatedLayout({ user, header, children }) {
+export default function UserLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const { language } = useLanguage();
 
-    // Role-based navigation items
+    const translations = {
+        en: {
+            dashboard: 'Dashboard',
+            properties: 'Properties',
+            favorites: 'Favorites',
+            inquiries: 'Inquiries',
+            profile: 'Profile',
+            logout: 'Log Out',
+        },
+        kh: {
+            dashboard: 'ផ្ទាំងគ្រប់គ្រង',
+            properties: 'អចលនទ្រព្យ',
+            favorites: 'ចំណូលចិត្ត',
+            inquiries: 'ការស្នើសុំ',
+            profile: 'ប្រវត្តិរូប',
+            logout: 'ចាកចេញ',
+        }
+    };
+
+    const t = translations[language];
+
     const getNavigationItems = () => {
-        const items = [
-            { name: 'Dashboard', href: route('dashboard'), current: route().current('dashboard') },
+        return [
+            { name: t.dashboard, href: route('homepage'), current: route().current('homepage') },
+            { name: t.properties, href: route('properties.index'), current: route().current('properties.*') },
+            { name: t.favorites, href: '#', current: false },
+            { name: t.inquiries, href: '#', current: false },
         ];
-
-        if (user.is_admin || user.is_agent) {
-            items.push(
-                { name: 'Properties', href: route('properties.index'), current: route().current('properties.*') },
-            );
-        }
-
-        if (user.isAdmin) {
-            items.push(
-                { name: 'Users', href: '#', current: false },
-                { name: 'Reports', href: '#', current: false },
-            );
-        }
-
-        if (user.isAgent) {
-            items.push(
-                { name: 'My Listings', href: '#', current: false },
-            );
-        }
-
-        items.push(
-            { name: 'Browse Properties', href: '#', current: false },
-        );
-
-        return items;
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            <nav className="bg-white border-b border-gray-100">
+        <div className="min-h-screen bg-gray-50">
+            <nav className="bg-dark border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
-                        <div className="flex">
-                            <div className="shrink-0 flex items-center">
-                                <Link href="/">
-                                    <ApplicationLogoIcon className="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                {getNavigationItems().map((item) => (
-                                    <NavLink
-                                        key={item.name}
-                                        href={item.href}
-                                        active={item.current}
-                                    >
-                                        {item.name}
-                                    </NavLink>
-                                ))}
-                            </div>
+                        {/* Logo */}
+                        <div className="flex items-center">
+                            <Link href="/">
+                                <ApplicationLogo className="h-9 w-auto fill-current text-dark" />
+                            </Link>
+                            
+                           
                         </div>
 
+                        
+        
+                        {/* User Dropdown */}
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
+                             {/* Language Switcher */}
+                            <div className="ml-4">
+                                <LanguageSwitcher />
+                            </div>
                             <div className="ms-3 relative">
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <span className="inline-flex rounded-md">
                                             <button
                                                 type="button"
-                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150"
+                                                className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-transparent hover:text-primary focus:outline-none transition ease-in-out duration-150"
                                             >
+                                                <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-2">
+                                                    {user.name.charAt(0).toUpperCase()}
+                                                </div>
                                                 {user.name}
-                                                <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                                                    {user.role} 
-                                                </span>
                                                 <svg
                                                     className="ms-2 -me-0.5 h-4 w-4"
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -95,20 +92,22 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link href={route('profile.edit')}>
+                                            {t.profile}
+                                        </Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Log Out
+                                            {t.logout}
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
                             </div>
                         </div>
 
-                        {/* Hamburger menu for mobile */}
+                        {/* Mobile menu button */}
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
                                 onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"
+                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400"
                             >
                                 <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                                     <path
@@ -133,31 +132,20 @@ export default function AuthenticatedLayout({ user, header, children }) {
 
                 {/* Mobile menu */}
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    <div className="pt-2 pb-3 space-y-1">
-                        {getNavigationItems().map((item) => (
-                            <ResponsiveNavLink
-                                key={item.name}
-                                href={item.href}
-                                active={item.current}
-                            >
-                                {item.name}
-                            </ResponsiveNavLink>
-                        ))}
-                    </div>
+                    
 
                     <div className="pt-4 pb-1 border-t border-gray-200">
                         <div className="px-4">
-                            <div className="font-medium text-base text-gray-800">{user.name}</div>
-                            <div className="font-medium text-sm text-gray-500">{user.email}</div>
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
-                                {user.role}
-                            </span>
+                            <div className="font-medium text-base text-white">{user.name}</div>
+                            
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('profile.edit')}>
+                                {t.profile}
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
-                                Log Out
+                                {t.logout}
                             </ResponsiveNavLink>
                         </div>
                     </div>
@@ -166,7 +154,9 @@ export default function AuthenticatedLayout({ user, header, children }) {
 
             {header && (
                 <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {header}
+                    </div>
                 </header>
             )}
 
