@@ -3,7 +3,7 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import ApplicationLogo from "@/Components/ApplicationLogoDark";
+import ApplicationLogo from "@/Components/ApplicationLogo";
 import { Head, Link, useForm, router } from "@inertiajs/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -91,22 +91,22 @@ export default function Register() {
 
             <div className="flex min-h-screen">
                 {/* Left Panel - Register Form (30%) */}
-                <div className={`w-full lg:w-3/10 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
+                <div className={`w-full lg:w-3/10 flex items-center bg-dark justify-center p-4 transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
                     <div className="max-w-md w-full">
                         
 
                         {/* Register Card */}
-                        <div className="bg-light rounded-2xl shadow-soft p-8">
+                        <div className="bg-dark rounded-2xl shadow-soft p-8">
                             <div className="">
                             <Link href={route('homepage')}>
                                 <ApplicationLogo className="w-24 h-auto mx-auto" />
                             </Link>
                         </div>
                             <div className="text-center mb-8">
-                                <h2 className="text-3xl font-bold text-dark mb-2">
+                                <h2 className="text-3xl font-bold text-white mb-2">
                                     {t.title}
                                 </h2>
-                                <p className="text-gray-600">{t.subtitle}</p>
+                                <p className="text-light">{t.subtitle}</p>
                             </div>
 
                             <form onSubmit={submit} className="space-y-5">
@@ -115,7 +115,7 @@ export default function Register() {
                                     <InputLabel
                                         htmlFor="name"
                                         value={t.name}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-light font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -132,7 +132,7 @@ export default function Register() {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -155,7 +155,7 @@ export default function Register() {
                                     <InputLabel
                                         htmlFor="email"
                                         value={t.email}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-light font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -172,7 +172,7 @@ export default function Register() {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -192,7 +192,7 @@ export default function Register() {
                                     <InputLabel
                                         htmlFor="phone"
                                         value={t.phone}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-light font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -208,7 +208,7 @@ export default function Register() {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -227,7 +227,7 @@ export default function Register() {
                                     <InputLabel
                                         htmlFor="password"
                                         value={t.password}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-light font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -244,7 +244,7 @@ export default function Register() {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -270,7 +270,7 @@ export default function Register() {
                                     <InputLabel
                                         htmlFor="password_confirmation"
                                         value={t.confirmPassword}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-light font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -290,7 +290,7 @@ export default function Register() {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -322,7 +322,7 @@ export default function Register() {
                                     <div className="ml-3 text-sm">
                                         <label
                                             htmlFor="terms"
-                                            className="text-gray-600"
+                                            className="text-white"
                                         >
                                             {t.terms}{" "}
                                             <Link
@@ -373,7 +373,7 @@ export default function Register() {
 
                             {/* Sign In Link */}
                             <div className="mt-8 text-center">
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-white">
                                     {t.haveAccount}{" "}
                                     <Link
                                         href={route("login")}

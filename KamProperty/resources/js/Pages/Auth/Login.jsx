@@ -4,7 +4,7 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
-import ApplicationLogo from "@/Components/ApplicationLogoDark";
+import ApplicationLogo from "@/Components/ApplicationLogo";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -73,17 +73,17 @@ export default function Login({ status, canResetPassword }) {
                        
 
                         {/* Login Card */}
-                        <div className="bg-light rounded-2xl shadow-soft p-8">
+                        <div className="bg-dark rounded-2xl shadow-soft p-8">
                             <div className="">
                                                         <Link href={route('homepage')}>
                                                             <ApplicationLogo className="w-24 h-auto mx-auto" />
                                                         </Link>
                                                     </div>
                             <div className="text-center mb-8">
-                                <h2 className="text-3xl font-bold text-dark mb-2">
+                                <h2 className="text-3xl font-bold text-white mb-2">
                                     {t.title}
                                 </h2>
-                                <p className="text-gray-600">{t.subtitle}</p>
+                                <p className="text-primary">{t.subtitle}</p>
                             </div>
 
                             {status && (
@@ -135,7 +135,7 @@ export default function Login({ status, canResetPassword }) {
                                     <InputLabel
                                         htmlFor="email"
                                         value={t.email}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-white font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -152,7 +152,7 @@ export default function Login({ status, canResetPassword }) {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -172,7 +172,7 @@ export default function Login({ status, canResetPassword }) {
                                     <InputLabel
                                         htmlFor="password"
                                         value={t.password}
-                                        className="text-dark font-medium mb-2"
+                                        className="text-white font-medium mb-2"
                                     />
                                     <div className="relative">
                                         <TextInput
@@ -188,7 +188,7 @@ export default function Login({ status, canResetPassword }) {
                                         />
                                         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                             <svg
-                                                className="h-5 w-5 text-gray-400"
+                                                className="h-5 w-5 text-primary"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -220,7 +220,7 @@ export default function Login({ status, canResetPassword }) {
                                             }
                                             className="text-primary border-gray-300 rounded focus:ring-primary"
                                         />
-                                        <span className="ms-2 text-sm text-gray-600">
+                                        <span className="ms-2 text-sm text-white">
                                             {t.remember}
                                         </span>
                                     </label>
@@ -273,7 +273,7 @@ export default function Login({ status, canResetPassword }) {
 
                             {/* Sign Up Link */}
                             <div className="mt-8 text-center">
-                                <p className="text-sm text-gray-600">
+                                <p className="text-sm text-white">
                                     {t.noAccount}{" "}
                                     <Link
                                         href={route("register")}
@@ -287,7 +287,7 @@ export default function Login({ status, canResetPassword }) {
 
                         {/* Footer Links */}
                         <div className="mt-8 text-center">
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-white">
                                 {language === "en"
                                     ? "By logging in, you agree to our Terms and Privacy Policy"
                                     : "ក្នុងការចូល អ្នកយល់ព្រមតាមលក្ខខណ្ឌ និងគោលការណ៍ឯកជនរបស់យើង"}

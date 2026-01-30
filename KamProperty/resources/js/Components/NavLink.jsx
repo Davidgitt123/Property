@@ -12,7 +12,7 @@ export default function NavLink({
     ...props
 }) {
     const baseClasses =
-        "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none";
+        "inline-flex items-center px-1 pt-1 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none";
 
     const classes = active
         ? `${baseClasses} ${

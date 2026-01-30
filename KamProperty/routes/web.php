@@ -13,9 +13,14 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, '__invoke'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
+    
 Route::get('/home', [HomePageController::class, 'index'])
     ->middleware(['auth'])
     ->name('homepage');
+
+// Public API route for image suggestions
+Route::get('/image-suggestions', [PropertyController::class, 'getImageSuggestions'])
+    ->name('image.suggestions');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -26,14 +31,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/properties', [PropertyController::class, 'index'])->name('properties.index');
     Route::get('/properties/{property}', [PropertyController::class, 'show'])->name('properties.show');
     
+    // TEMPORARILY REMOVE AGENT MIDDLEWARE - Add it back later
     // Protected routes for agents and admins
-    Route::middleware(['agent'])->group(function () {
-        Route::get('/properties/create', [PropertyController::class, 'create'])->name('properties.create');
+    // Route::middleware(['agent'])->group(function () {
         Route::post('/properties', [PropertyController::class, 'store'])->name('properties.store');
-        Route::get('/properties/{property}/edit', [PropertyController::class, 'edit'])->name('properties.edit');
         Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
+        Route::patch('/properties/{property}', [PropertyController::class, 'update']);
         Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])->name('properties.destroy');
-    });
+    // });
+    
     // New routes for navigation
     Route::get('/inquiries', function () {
         return inertia('Inquiries/Index');

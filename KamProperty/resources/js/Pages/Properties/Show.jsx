@@ -16,11 +16,7 @@ export default function Show({ auth, property, relatedProperties }) {
                         <Link href={route('properties.index')}>
                             <PrimaryButton variant="secondary">Back to Properties</PrimaryButton>
                         </Link>
-                        {(auth.user.is_admin || (auth.user.is_agent && property.user_id === auth.user.id)) && (
-                            <Link href={route('properties.edit', property.id)}>
-                                <PrimaryButton>Edit Property</PrimaryButton>
-                            </Link>
-                        )}
+                        
                     </div>
                 </div>
             }

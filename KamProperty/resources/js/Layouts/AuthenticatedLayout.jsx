@@ -10,7 +10,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function AuthenticatedLayout({ user, header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
-    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
     const { language } = useLanguage();
 
     const translations = {
@@ -18,7 +17,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
             dashboard: "Dashboard",
             properties: "Properties",
             inquiries: "Inquiries",
-            users: "Users",
+            users: "Users Management",
             reports: "Reports",
             myListings: "My Listings",
             browseProperties: "Browse Properties",
@@ -27,7 +26,6 @@ export default function AuthenticatedLayout({ user, header, children }) {
             profile: "Profile",
             logout: "Log Out",
             settings: "Settings",
-            toggleSidebar: "Toggle sidebar",
         },
         kh: {
             dashboard: "ផ្ទាំងគ្រប់គ្រង",
@@ -42,7 +40,6 @@ export default function AuthenticatedLayout({ user, header, children }) {
             profile: "ប្រវត្តិរូប",
             logout: "ចាកចេញ",
             settings: "ការកំណត់",
-            toggleSidebar: "បិទ/បើកសារខាង",
         },
     };
 
@@ -124,27 +121,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                     name: t.users,
                     href: route("users.index"),
                     current: route().current("users.*"),
-                    icon: (
-                        <svg
-                            className="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5 2.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"
-                            />
-                        </svg>
-                    ),
-                },
-                {
-                    name: t.owners,
-                    href: route("owners.index"),
-                    current: route().current("owners.*"),
-                    icon: (
+                     icon: (
                         <svg
                             className="w-5 h-5"
                             fill="none"
@@ -160,6 +137,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         </svg>
                     ),
                 },
+                
                 {
                     name: t.reports,
                     href: route("reports.index"),
@@ -279,105 +257,47 @@ export default function AuthenticatedLayout({ user, header, children }) {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex">
+        <div className="min-h-screen bg-gray-50 flex fixed inset-0 overflow-hidden">
             {/* Dark Sidebar */}
-            <div
-                className={`${
-                    sidebarCollapsed ? "w-20" : "w-64"
-                } bg-dark transition-all duration-300 ease-in-out fixed h-100 z-40 md:relative md:flex flex-col hidden`}
-            >
+            <div className="w-64 bg-dark flex flex-col hidden md:flex">
                 {/* Logo */}
                 <div className="p-6 border-b border-gray-800">
-                    <div className="flex items-center justify-between">
-                        <Link href="/" className="flex items-center">
-                            <ApplicationLogo className="h-8 w-auto fill-current text-white" />
-                        </Link>
-                        <button
-                            onClick={() =>
-                                setSidebarCollapsed(!sidebarCollapsed)
-                            }
-                            className="p-1.5 rounded-lg hover:bg-gray-800 transition-colors duration-200 text-gray-400 hover:text-white"
-                            title={t.toggleSidebar}
-                        >
-                            <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                {sidebarCollapsed ? (
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M13 5l7 7-7 7M5 5l7 7-7 7"
-                                    />
-                                ) : (
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M11 19l-7-7 7-7m8 14l-7-7 7-7"
-                                    />
-                                )}
-                            </svg>
-                        </button>
-                    </div>
+                    <Link href="/" className="flex items-center">
+                        <ApplicationLogo className="h-8 w-auto fill-current text-white" />
+                    </Link>
                 </div>
 
                 {/* Navigation */}
                 <div className="flex-1 overflow-y-auto py-4">
-                    <nav className="px-4">
-                        {getNavigationItems().map((item, index) => (
-                            <div key={item.name} className="relative">
-                                {/* Subtle separator line - only show between items */}
-                                {index > 0 && !sidebarCollapsed && (
-                                    <div className="absolute left-4 right-4 top-0 h-px bg-gray-800/50"></div>
+                    <nav className="px-4 space-y-1">
+                        {getNavigationItems().map((item) => (
+                            <NavLink
+                                key={item.name}
+                                href={item.href}
+                                active={item.current}
+                                className="flex items-center px-4 py-3 text-sm font-medium transition-all duration-200 relative group hover:bg-gray-800/30"
+                                activeClassName="text-white bg-gray-800/40"
+                                inactiveClassName="text-gray-400 hover:text-white"
+                            >
+                                {/* Active indicator dot */}
+                                {item.current && (
+                                    <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"></div>
                                 )}
 
-                                <NavLink
-                                    href={item.href}
-                                    active={item.current}
-                                    className={`flex items-center ${
-                                        sidebarCollapsed
-                                            ? "justify-center px-3"
-                                            : "px-4"
-                                    } py-3 text-sm font-medium transition-all duration-200 relative group hover:bg-gray-800/30`}
-                                    activeClassName="text-white bg-gray-800/40"
-                                    inactiveClassName="text-gray-400 hover:text-white"
-                                >
-                                    {/* Active indicator dot */}
-                                    {item.current && !sidebarCollapsed && (
-                                        <div className="absolute left-0 w-1 h-6 bg-primary rounded-r-full"></div>
-                                    )}
+                                {/* Icon */}
+                                <div className="flex-shrink-0">
+                                    {item.icon}
+                                </div>
 
-                                    {/* Icon */}
-                                    <div className="flex-shrink-0">
-                                        {item.icon}
+                                {/* Label */}
+                                <div className="ml-3 flex-1">
+                                    <div className="relative inline-block">
+                                        {item.name}
+                                        {/* Hover underline effect */}
+                                        <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
                                     </div>
-
-                                    {/* Label - only shown when expanded */}
-                                    {!sidebarCollapsed && (
-                                        <div className="ml-3 flex-1">
-                                            <div className="relative inline-block">
-                                                {item.name}
-                                                {/* Hover underline effect */}
-                                                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></span>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Tooltip for collapsed state */}
-                                    {sidebarCollapsed && (
-                                        <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 whitespace-nowrap shadow-lg border border-gray-700 z-50">
-                                            {item.name}
-                                            {item.current && (
-                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1 h-4 bg-primary rounded-r-full"></div>
-                                            )}
-                                        </div>
-                                    )}
-                                </NavLink>
-                            </div>
+                                </div>
+                            </NavLink>
                         ))}
                     </nav>
 
@@ -390,37 +310,9 @@ export default function AuthenticatedLayout({ user, header, children }) {
                             </div>
                         </div>
 
-                        <div
-                            className={`${
-                                sidebarCollapsed
-                                    ? "justify-center px-3"
-                                    : "px-4"
-                            } flex items-center py-3 rounded-lg bg-gray-800/40`}
-                        >
-                            {!sidebarCollapsed && (
-                                <div className="flex items-center flex-1">
-                                    <svg
-                                        className="w-5 h-5 text-gray-400 mr-3"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"
-                                        />
-                                    </svg>
-                                    <span className="text-sm text-gray-300">
-                                        Language
-                                    </span>
-                                </div>
-                            )}
-                            <LanguageSwitcher
-                                className={sidebarCollapsed ? "w-full" : ""}
-                                darkMode={true}
-                            />
+                        <div className="flex items-center px-4 py-3 rounded-lg bg-gray-800/40">
+                            
+                            <LanguageSwitcher darkMode={true} />
                         </div>
                     </div>
                 </div>
@@ -436,37 +328,33 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center text-white font-bold flex-shrink-0">
                                     {user.name.charAt(0).toUpperCase()}
                                 </div>
-                                {!sidebarCollapsed && (
-                                    <div className="ml-3 text-left flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-white truncate">
-                                            {user.name}
-                                        </div>
-                                        <div className="text-xs text-gray-400 truncate">
-                                            {user.email}
-                                        </div>
-                                        <div
-                                            className={`mt-1 inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${getRoleColor(
-                                                user.role
-                                            )}`}
-                                        >
-                                            {getRoleText(user.role)}
-                                        </div>
+                                <div className="ml-3 text-left flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-white truncate">
+                                        {user.name}
                                     </div>
-                                )}
-                                {!sidebarCollapsed && (
-                                    <svg
-                                        className="h-5 w-5 text-gray-400 flex-shrink-0"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
+                                    <div className="text-xs text-gray-400 truncate">
+                                        {user.email}
+                                    </div>
+                                    <div
+                                        className={`mt-1 inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${getRoleColor(
+                                            user.role
+                                        )}`}
                                     >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clipRule="evenodd"
-                                        />
-                                    </svg>
-                                )}
+                                        {getRoleText(user.role)}
+                                    </div>
+                                </div>
+                                <svg
+                                    className="h-5 w-5 text-gray-400 flex-shrink-0"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                >
+                                    <path
+                                        fillRule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clipRule="evenodd"
+                                    />
+                                </svg>
                             </button>
                         </Dropdown.Trigger>
 
@@ -564,18 +452,15 @@ export default function AuthenticatedLayout({ user, header, children }) {
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 flex flex-col overflow-hidden md:ml-0">
+            <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Top Navigation Bar (Mobile) */}
-                <nav className="bg-gray-900 border-b border-gray-800 shadow-sm md:hidden">
+                <nav className="bg-gray-900 md:hidden">
                     <div className="px-4 sm:px-6 lg:px-8">
                         <div className="flex justify-between h-16">
                             {/* Logo */}
                             <div className="flex items-center">
                                 <Link href="/" className="flex items-center">
                                     <ApplicationLogo className="h-8 w-auto fill-current text-white" />
-                                    <span className="ml-3 text-lg font-bold text-white">
-                                        KamProperty
-                                    </span>
                                 </Link>
                             </div>
 
@@ -773,7 +658,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                     </div>
                 </nav>
 
-                {/* Page Header */}
+                {/* Page Header - Fixed */}
                 {header && (
                     <header className="bg-white shadow-sm">
                         <div className="max-w-full mx-auto py-4 px-4 sm:px-6 lg:px-8">
@@ -784,8 +669,8 @@ export default function AuthenticatedLayout({ user, header, children }) {
                     </header>
                 )}
 
-                {/* Main Content */}
-                <main className="flex-1 overflow-y-auto">
+                {/* Main Content - Scrollable only this area */}
+                <main className="flex-1 overflow-y-auto bg-gray-50">
                     <div className="py-6 px-4 sm:px-6 lg:px-8">{children}</div>
                 </main>
 
