@@ -1,9 +1,9 @@
-import React from "react";
-import GuestLayout from "@/Layouts/GuestLayout";
+import React, { useState, useEffect } from "react";
 import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
+import ApplicationLogo from "@/Components/ApplicationLogoDark";
 import { Head, Link, useForm, router } from "@inertiajs/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -17,6 +17,14 @@ export default function Register() {
         phone: "",
         address: "",
     });
+
+    const [isVisible, setIsVisible] = useState(false);
+
+    useEffect(() => {
+        // Trigger animation on mount
+        setIsVisible(true);
+        return () => setIsVisible(false);
+    }, []);
 
     const translations = {
         en: {
@@ -71,7 +79,6 @@ export default function Register() {
         e.preventDefault();
         post(route("register"), {
             onSuccess: () => {
-                // Redirect to HomePage after successful registration
                 router.visit(route("homepage"));
             },
             onFinish: () => reset("password", "password_confirmation"),
@@ -79,293 +86,346 @@ export default function Register() {
     };
 
     return (
-        <div>
+        <div className="min-h-screen">
             <Head title={t.title} />
 
-            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-dark/100 to-dark/90 p-4">
-                <div className="max-w-md w-full">
-                    {/* Register Card */}
-                    <div className="bg-light rounded-2xl shadow-soft p-8">
-                        <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-dark mb-2">
-                                {t.title}
-                            </h2>
-                            <p className="text-gray-600">{t.subtitle}</p>
+            <div className="flex min-h-screen">
+                {/* Left Panel - Register Form (30%) */}
+                <div className={`w-full lg:w-3/10 flex items-center justify-center p-4 transition-all duration-500 ease-in-out ${isVisible ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'}`}>
+                    <div className="max-w-md w-full">
+                        
+
+                        {/* Register Card */}
+                        <div className="bg-light rounded-2xl shadow-soft p-8">
+                            <div className="">
+                            <Link href={route('homepage')}>
+                                <ApplicationLogo className="w-24 h-auto mx-auto" />
+                            </Link>
                         </div>
-
-                        <form onSubmit={submit} className="space-y-5">
-                            {/* Name Input */}
-                            <div>
-                                <InputLabel
-                                    htmlFor="name"
-                                    value={t.name}
-                                    className="text-dark font-medium mb-2"
-                                />
-                                <div className="relative">
-                                    <TextInput
-                                        id="name"
-                                        name="name"
-                                        value={data.name}
-                                        className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
-                                        autoComplete="name"
-                                        isFocused={true}
-                                        onChange={(e) =>
-                                            setData("name", e.target.value)
-                                        }
-                                        required
-                                    />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg
-                                            className="h-5 w-5 text-gray-400"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <InputError
-                                    message={errors.name}
-                                    className="mt-2"
-                                />
+                            <div className="text-center mb-8">
+                                <h2 className="text-3xl font-bold text-dark mb-2">
+                                    {t.title}
+                                </h2>
+                                <p className="text-gray-600">{t.subtitle}</p>
                             </div>
 
-                            {/* Email Input */}
-                            <div>
-                                <InputLabel
-                                    htmlFor="email"
-                                    value={t.email}
-                                    className="text-dark font-medium mb-2"
-                                />
-                                <div className="relative">
-                                    <TextInput
-                                        id="email"
-                                        type="email"
-                                        name="email"
-                                        value={data.email}
-                                        className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
-                                        autoComplete="username"
-                                        onChange={(e) =>
-                                            setData("email", e.target.value)
-                                        }
-                                        required
+                            <form onSubmit={submit} className="space-y-5">
+                                {/* Name Input */}
+                                <div>
+                                    <InputLabel
+                                        htmlFor="name"
+                                        value={t.name}
+                                        className="text-dark font-medium mb-2"
                                     />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg
-                                            className="h-5 w-5 text-gray-400"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-                                        </svg>
+                                    <div className="relative">
+                                        <TextInput
+                                            id="name"
+                                            name="name"
+                                            value={data.name}
+                                            className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                                            autoComplete="name"
+                                            isFocused={true}
+                                            onChange={(e) =>
+                                                setData("name", e.target.value)
+                                            }
+                                            required
+                                        />
+                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg
+                                                className="h-5 w-5 text-gray-400"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
                                     </div>
+                                    <InputError
+                                        message={errors.name}
+                                        className="mt-2"
+                                    />
                                 </div>
-                                <InputError
-                                    message={errors.email}
-                                    className="mt-2"
-                                />
-                            </div>
 
-                            {/* Phone Input */}
-                            <div>
-                                <InputLabel
-                                    htmlFor="phone"
-                                    value={t.phone}
-                                    className="text-dark font-medium mb-2"
-                                />
-                                <div className="relative">
-                                    <TextInput
-                                        id="phone"
-                                        type="tel"
-                                        name="phone"
-                                        value={data.phone}
-                                        className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
-                                        autoComplete="tel"
-                                        onChange={(e) =>
-                                            setData("phone", e.target.value)
-                                        }
+                                {/* Email Input */}
+                                <div>
+                                    <InputLabel
+                                        htmlFor="email"
+                                        value={t.email}
+                                        className="text-dark font-medium mb-2"
                                     />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg
-                                            className="h-5 w-5 text-gray-400"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                                        </svg>
+                                    <div className="relative">
+                                        <TextInput
+                                            id="email"
+                                            type="email"
+                                            name="email"
+                                            value={data.email}
+                                            className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                                            autoComplete="username"
+                                            onChange={(e) =>
+                                                setData("email", e.target.value)
+                                            }
+                                            required
+                                        />
+                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg
+                                                className="h-5 w-5 text-gray-400"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                                                <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                                            </svg>
+                                        </div>
                                     </div>
+                                    <InputError
+                                        message={errors.email}
+                                        className="mt-2"
+                                    />
                                 </div>
-                                <InputError
-                                    message={errors.phone}
-                                    className="mt-2"
-                                />
-                            </div>
 
-                            {/* Password Input */}
-                            <div>
-                                <InputLabel
-                                    htmlFor="password"
-                                    value={t.password}
-                                    className="text-dark font-medium mb-2"
-                                />
-                                <div className="relative">
-                                    <TextInput
-                                        id="password"
-                                        type="password"
-                                        name="password"
-                                        value={data.password}
-                                        className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
-                                        autoComplete="new-password"
-                                        onChange={(e) =>
-                                            setData("password", e.target.value)
-                                        }
-                                        required
+                                {/* Phone Input */}
+                                <div>
+                                    <InputLabel
+                                        htmlFor="phone"
+                                        value={t.phone}
+                                        className="text-dark font-medium mb-2"
                                     />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg
-                                            className="h-5 w-5 text-gray-400"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
+                                    <div className="relative">
+                                        <TextInput
+                                            id="phone"
+                                            type="tel"
+                                            name="phone"
+                                            value={data.phone}
+                                            className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                                            autoComplete="tel"
+                                            onChange={(e) =>
+                                                setData("phone", e.target.value)
+                                            }
+                                        />
+                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg
+                                                className="h-5 w-5 text-gray-400"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <InputError
+                                        message={errors.phone}
+                                        className="mt-2"
+                                    />
+                                </div>
+
+                                {/* Password Input */}
+                                <div>
+                                    <InputLabel
+                                        htmlFor="password"
+                                        value={t.password}
+                                        className="text-dark font-medium mb-2"
+                                    />
+                                    <div className="relative">
+                                        <TextInput
+                                            id="password"
+                                            type="password"
+                                            name="password"
+                                            value={data.password}
+                                            className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                                            autoComplete="new-password"
+                                            onChange={(e) =>
+                                                setData("password", e.target.value)
+                                            }
+                                            required
+                                        />
+                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg
+                                                className="h-5 w-5 text-gray-400"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <InputError
+                                        message={errors.password}
+                                        className="mt-2"
+                                    />
+                                    <p className="mt-1 text-xs text-gray-500">
+                                        {t.passwordRequirements}
+                                    </p>
+                                </div>
+
+                                {/* Confirm Password Input */}
+                                <div>
+                                    <InputLabel
+                                        htmlFor="password_confirmation"
+                                        value={t.confirmPassword}
+                                        className="text-dark font-medium mb-2"
+                                    />
+                                    <div className="relative">
+                                        <TextInput
+                                            id="password_confirmation"
+                                            type="password"
+                                            name="password_confirmation"
+                                            value={data.password_confirmation}
+                                            className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
+                                            autoComplete="new-password"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "password_confirmation",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        />
+                                        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                            <svg
+                                                className="h-5 w-5 text-gray-400"
+                                                fill="currentColor"
+                                                viewBox="0 0 20 20"
+                                            >
+                                                <path
+                                                    fillRule="evenodd"
+                                                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                                    clipRule="evenodd"
+                                                />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <InputError
+                                        message={errors.password_confirmation}
+                                        className="mt-2"
+                                    />
+                                </div>
+
+                                {/* Terms Checkbox */}
+                                <div className="flex items-start">
+                                    <div className="flex items-center h-5">
+                                        <input
+                                            id="terms"
+                                            name="terms"
+                                            type="checkbox"
+                                            required
+                                            className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary transition-all duration-300"
+                                        />
+                                    </div>
+                                    <div className="ml-3 text-sm">
+                                        <label
+                                            htmlFor="terms"
+                                            className="text-gray-600"
                                         >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
+                                            {t.terms}{" "}
+                                            <Link
+                                                href="#"
+                                                className="text-primary hover:text-primary-dark underline transition-colors duration-300"
+                                            >
+                                                {t.privacy}
+                                            </Link>
+                                        </label>
                                     </div>
                                 </div>
-                                <InputError
-                                    message={errors.password}
-                                    className="mt-2"
-                                />
-                                <p className="mt-1 text-xs text-gray-500">
-                                    {t.passwordRequirements}
+
+                                {/* Register Button */}
+                                <PrimaryButton
+                                    className="w-full justify-center py-3 text-base font-medium mt-2 transition-transform duration-300 hover:scale-[1.02]"
+                                    disabled={processing}
+                                >
+                                    {processing ? (
+                                        <>
+                                            <svg
+                                                className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <circle
+                                                    className="opacity-25"
+                                                    cx="12"
+                                                    cy="12"
+                                                    r="10"
+                                                    stroke="currentColor"
+                                                    strokeWidth="4"
+                                                ></circle>
+                                                <path
+                                                    className="opacity-75"
+                                                    fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                                ></path>
+                                            </svg>
+                                            {language === "en"
+                                                ? "Creating account..."
+                                                : "កំពុងបង្កើតគណនី..."}
+                                        </>
+                                    ) : (
+                                        t.signUp
+                                    )}
+                                </PrimaryButton>
+                            </form>
+
+                            {/* Sign In Link */}
+                            <div className="mt-8 text-center">
+                                <p className="text-sm text-gray-600">
+                                    {t.haveAccount}{" "}
+                                    <Link
+                                        href={route("login")}
+                                        className="font-medium text-primary hover:text-primary-dark underline transition-all duration-300 hover:tracking-wide"
+                                    >
+                                        {t.signIn}
+                                    </Link>
                                 </p>
                             </div>
+                        </div>
+                    </div>
+                </div>
 
-                            {/* Confirm Password Input */}
-                            <div>
-                                <InputLabel
-                                    htmlFor="password_confirmation"
-                                    value={t.confirmPassword}
-                                    className="text-dark font-medium mb-2"
-                                />
-                                <div className="relative">
-                                    <TextInput
-                                        id="password_confirmation"
-                                        type="password"
-                                        name="password_confirmation"
-                                        value={data.password_confirmation}
-                                        className="block w-full border-gray-300 rounded-lg focus:border-primary focus:ring-primary"
-                                        autoComplete="new-password"
-                                        onChange={(e) =>
-                                            setData(
-                                                "password_confirmation",
-                                                e.target.value
-                                            )
-                                        }
-                                        required
-                                    />
-                                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                                        <svg
-                                            className="h-5 w-5 text-gray-400"
-                                            fill="currentColor"
-                                            viewBox="0 0 20 20"
-                                        >
-                                            <path
-                                                fillRule="evenodd"
-                                                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                                clipRule="evenodd"
-                                            />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <InputError
-                                    message={errors.password_confirmation}
-                                    className="mt-2"
-                                />
-                            </div>
-
-                            {/* Terms Checkbox */}
-                            <div className="flex items-start">
-                                <div className="flex items-center h-5">
-                                    <input
-                                        id="terms"
-                                        name="terms"
-                                        type="checkbox"
-                                        required
-                                        className="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"
-                                    />
-                                </div>
-                                <div className="ml-3 text-sm">
-                                    <label
-                                        htmlFor="terms"
-                                        className="text-gray-600"
-                                    >
-                                        {t.terms}{" "}
-                                        <Link
-                                            href="#"
-                                            className="text-primary hover:text-primary-dark"
-                                        >
-                                            {t.privacy}
-                                        </Link>
-                                    </label>
-                                </div>
-                            </div>
-
-                            {/* Register Button */}
-                            <PrimaryButton
-                                className="w-full justify-center py-3 text-base font-medium mt-2"
-                                disabled={processing}
-                            >
-                                {processing ? (
-                                    <>
-                                        <svg
-                                            className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <circle
-                                                className="opacity-25"
-                                                cx="12"
-                                                cy="12"
-                                                r="10"
-                                                stroke="currentColor"
-                                                strokeWidth="4"
-                                            ></circle>
-                                            <path
-                                                className="opacity-75"
-                                                fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                            ></path>
-                                        </svg>
-                                        {language === "en"
-                                            ? "Creating account..."
-                                            : "កំពុងបង្កើតគណនី..."}
-                                    </>
-                                ) : (
-                                    t.signUp
-                                )}
-                            </PrimaryButton>
-                        </form>
-
-                        {/* Sign In Link */}
-                        <div className="mt-8 text-center">
-                            <p className="text-sm text-gray-600">
-                                {t.haveAccount}{" "}
-                                <Link
-                                    href={route("login")}
-                                    className="font-medium text-primary hover:text-primary-dark"
-                                >
-                                    {t.signIn}
-                                </Link>
+                {/* Right Panel - Property Image (70%) */}
+                <div className="w-full hidden lg:flex lg:w-7/10 bg-gradient-to-br from-primary/90 to-primary-dark/90 relative overflow-hidden">
+                    <div className="absolute inset-0 bg-black/20 z-10"></div>
+                    <div 
+                        className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out"
+                        style={{
+                            backgroundImage: "url('https://i.pinimg.com/originals/07/54/47/075447498c09cf11d870f0b03f1cb5a8.jpg')",
+                            backgroundSize: 'cover',
+                            transform: isVisible ? 'scale(1.05)' : 'scale(1)'
+                        }}
+                    ></div>
+                    
+                    {/* Property Info Overlay */}
+                    <div className={`relative z-20 p-12 flex flex-col justify-end h-full text-white transition-all duration-700 delay-300 ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
+                        <div className="max-w-2xl">
+                            <h3 className="text-4xl font-bold mb-4">
+                                {language === "en" 
+                                    ? "Join Our Community" 
+                                    : "ចូលរួមក្នុងសហគមន៍របស់យើង"}
+                            </h3>
+                            <p className="text-lg mb-6 opacity-90">
+                                {language === "en"
+                                    ? "Get personalized property recommendations and exclusive market insights"
+                                    : "ទទួលបានការណែនាំអចលនទ្រព្យផ្ទាល់ខ្លួន និងការយល់ដឹងពិសេសអំពីទីផ្សារ"}
                             </p>
+                            <div className="grid grid-cols-3 gap-6 mb-6">
+                                <div>
+                                    <div className="text-2xl font-bold mb-1">5,000+</div>
+                                    <div className="text-sm opacity-80">{language === "en" ? "Properties" : "អចលនទ្រព្យ"}</div>
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold mb-1">120+</div>
+                                    <div className="text-sm opacity-80">{language === "en" ? "Locations" : "ទីតាំង"}</div>
+                                </div>
+                                <div>
+                                    <div className="text-2xl font-bold mb-1">24/7</div>
+                                    <div className="text-sm opacity-80">{language === "en" ? "Support" : "ការគាំទ្រ"}</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
