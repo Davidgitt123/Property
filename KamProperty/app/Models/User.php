@@ -18,6 +18,8 @@ class User extends Authenticatable
         'role',
         'phone',
         'address',
+        'status',
+        'last_login_at',
     ];
 
     protected $hidden = [
@@ -27,6 +29,7 @@ class User extends Authenticatable
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'last_login_at' => 'datetime',
         'password' => 'hashed',
     ];
 
@@ -63,4 +66,34 @@ class User extends Authenticatable
     {
         return $this->isUser();
     }
+    public function properties()
+{
+    return $this->hasMany(Property::class);
+}
+
+public function assignedInquiries()
+{
+    return $this->hasMany(Inquiry::class, 'assigned_to');
+}
+
+// Add scope for active users:
+public function scopeActive($query)
+{
+    return $query->where('status', 'active');
+}
+
+public function scopeAgents($query)
+{
+    return $query->where('role', 'agent');
+}
+
+public function scopeAdmins($query)
+{
+    return $query->where('role', 'admin');
+}
+
+public function scopeUsers($query)
+{
+    return $query->where('role', 'user');
+}
 }

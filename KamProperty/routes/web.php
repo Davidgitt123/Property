@@ -10,7 +10,7 @@ Route::get('/', function () {
     return inertia('Welcome');
 })->name('home');
 
-Route::get('/dashboard', [DashboardController::class, 'index'])
+Route::get('/dashboard', [DashboardController::class, '__invoke'])
     ->middleware(['auth', 'verified'])
     ->name('dashboard');
 Route::get('/home', [HomePageController::class, 'index'])
@@ -34,6 +34,38 @@ Route::middleware('auth')->group(function () {
         Route::put('/properties/{property}', [PropertyController::class, 'update'])->name('properties.update');
         Route::delete('/properties/{property}', [PropertyController::class, 'destroy'])->name('properties.destroy');
     });
+    // New routes for navigation
+    Route::get('/inquiries', function () {
+        return inertia('Inquiries/Index');
+    })->name('inquiries.index');
+    
+    Route::get('/users', function () {
+        return inertia('Users/Index');
+    })->name('users.index');
+    
+    Route::get('/owners', function () {
+        return inertia('Owners/Index');
+    })->name('owners.index');
+    
+    Route::get('/reports', function () {
+        return inertia('Reports/Index');
+    })->name('reports.index');
+    
+    Route::get('/settings', function () {
+        return inertia('Settings/Index');
+    })->name('settings.index');
+    
+    Route::get('/commission', function () {
+        return inertia('Commission/Index');
+    })->name('commission.index');
+    
+    Route::get('/properties/my', function () {
+        return inertia('Properties/My');
+    })->name('properties.my');
+    
+    Route::get('/properties/browse', function () {
+        return inertia('Properties/Browse');
+    })->name('properties.browse');
 });
 
 require __DIR__.'/auth.php';
