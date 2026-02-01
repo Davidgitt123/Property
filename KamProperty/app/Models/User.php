@@ -75,7 +75,10 @@ public function assignedInquiries()
 {
     return $this->hasMany(Inquiry::class, 'assigned_to');
 }
-
+public function owner()
+{
+    return $this->hasOne(Owner::class);
+}
 // Add scope for active users:
 public function scopeActive($query)
 {

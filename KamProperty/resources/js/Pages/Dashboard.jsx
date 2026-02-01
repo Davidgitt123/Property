@@ -37,7 +37,6 @@ export default function Dashboard({ auth, stats, recentData, userRole }) {
             total: "Total",
             adminDashboard: "Admin Dashboard",
             agentDashboard: "Agent Dashboard",
-            systemOverview: "System Overview",
             myPerformance: "My Performance",
             quickActions: "Quick Actions",
         },
@@ -70,7 +69,6 @@ export default function Dashboard({ auth, stats, recentData, userRole }) {
             total: "សរុប",
             adminDashboard: "ផ្ទាំងគ្រប់គ្រងអ្នកគ្រប់គ្រង",
             agentDashboard: "ផ្ទាំងគ្រប់គ្រងភ្នាក់ងារ",
-            systemOverview: "ទិដ្ឋភាពទូទៅប្រព័ន្ធ",
             myPerformance: "ការសម្តែងរបស់ខ្ញុំ",
             quickActions: "សកម្មភាពរហ័ស",
         },
@@ -337,13 +335,6 @@ export default function Dashboard({ auth, stats, recentData, userRole }) {
                             {t.welcome}, {auth.user.name}!
                         </p>
                     </div>
-                    <div className="flex space-x-4">
-                        <Link href={route("properties.create")}>
-                            <PrimaryButton>
-                                + {t.addNew} {t.properties}
-                            </PrimaryButton>
-                        </Link>
-                    </div>
                 </div>
             }
         >
@@ -351,34 +342,6 @@ export default function Dashboard({ auth, stats, recentData, userRole }) {
 
             <div className="py-8">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    {/* Welcome Banner */}
-                    <div className="bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-6 mb-8 text-white">
-                        <div className="flex flex-col md:flex-row items-center justify-between">
-                            <div>
-                                <h1 className="text-2xl font-bold mb-2">
-                                    {isAdmin
-                                        ? t.systemOverview
-                                        : t.myPerformance}
-                                </h1>
-                                <p className="text-primary-light">
-                                    {isAdmin
-                                        ? "Manage properties, users, and inquiries"
-                                        : "Track your listings and commissions"}
-                                </p>
-                            </div>
-                            <div className="mt-4 md:mt-0">
-                                <div className="text-sm">
-                                    <span className="opacity-80">
-                                        {t.lastLogin}:{" "}
-                                    </span>
-                                    <span className="font-semibold">
-                                        Today, 09:42 AM
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     {/* Quick Actions */}
                     <div className="mb-8">
                         <h3 className="text-lg font-bold text-dark mb-4">
@@ -397,7 +360,9 @@ export default function Dashboard({ auth, stats, recentData, userRole }) {
                                 icon="users"
                                 color="primary"
                                 link={
-                                    isAdmin ? "#" : route("properties.create")
+                                    isAdmin
+                                        ? route("users.index")
+                                        : route("properties.create")
                                 }
                             />
                             <QuickAction

@@ -1,16 +1,30 @@
 import React, { useState } from "react";
 import ApplicationLogo from "@/Components/ApplicationLogo";
-import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
 import LanguageSwitcher from "@/Components/LanguageSwitcher";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-export default function AuthenticatedLayout({ user, header, children }) {
+export default function AuthenticatedLayout({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
     const { language } = useLanguage();
+    const { auth } = usePage().props;
+
+    const user = auth?.user;
+
+    // Safety check - if no user, show loading
+    if (!user) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading...</p>
+                </div>
+            </div>
+        );
+    }
 
     const translations = {
         en: {
@@ -18,6 +32,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
             properties: "Properties",
             inquiries: "Inquiries",
             users: "Users Management",
+            owners: "Owners Management",
             reports: "Reports",
             myListings: "My Listings",
             browseProperties: "Browse Properties",
@@ -36,7 +51,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
             myListings: "បញ្ជីរបស់ខ្ញុំ",
             browseProperties: "រុករកអចលនទ្រព្យ",
             commission: "កម្រៃជើងសារ",
-            owners: "ម្ចាស់",
+            owners: "ម្ចាស់អចលនទ្រព្យ",
             profile: "ប្រវត្តិរូប",
             logout: "ចាកចេញ",
             settings: "ការកំណត់",
@@ -121,7 +136,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                     name: t.users,
                     href: route("users.index"),
                     current: route().current("users.*"),
-                     icon: (
+                    icon: (
                         <svg
                             className="w-5 h-5"
                             fill="none"
@@ -137,7 +152,26 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         </svg>
                     ),
                 },
-                
+                {
+                    name: t.owners,
+                    href: route("owners.index"),
+                    current: route().current("owners.*"),
+                    icon: (
+                        <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                            />
+                        </svg>
+                    ),
+                },
                 {
                     name: t.reports,
                     href: route("reports.index"),
@@ -206,27 +240,6 @@ export default function AuthenticatedLayout({ user, header, children }) {
             );
         }
 
-        items.push({
-            name: t.browseProperties,
-            href: route("properties.browse"),
-            current: route().current("properties.browse"),
-            icon: (
-                <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                </svg>
-            ),
-        });
-
         return items;
     };
 
@@ -285,9 +298,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 )}
 
                                 {/* Icon */}
-                                <div className="flex-shrink-0">
-                                    {item.icon}
-                                </div>
+                                <div className="flex-shrink-0">{item.icon}</div>
 
                                 {/* Label */}
                                 <div className="ml-3 flex-1">
@@ -302,7 +313,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                     </nav>
 
                     {/* Language Switcher in Sidebar */}
-                    <div className="px-4 mt-8">
+                    <div className="px-4 mt-4">
                         {/* Separator before language switcher */}
                         <div className="relative mb-4">
                             <div className="absolute inset-0 flex items-center">
@@ -311,76 +322,44 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         </div>
 
                         <div className="flex items-center px-4 py-3 rounded-lg bg-gray-800/40">
-                            
                             <LanguageSwitcher darkMode={true} />
                         </div>
                     </div>
                 </div>
 
-                {/* User Info at Bottom */}
+                {/* User Info at Bottom - SIMPLIFIED VERSION */}
                 <div className="p-4 border-t border-gray-800">
-                    <Dropdown>
-                        <Dropdown.Trigger>
-                            <button
-                                type="button"
-                                className="flex items-center w-full p-2 rounded-lg hover:bg-gray-800 transition-colors duration-200 focus:outline-none"
-                            >
-                                <div className="h-9 w-9 rounded-full bg-primary flex items-center justify-center text-white font-bold flex-shrink-0">
-                                    {user.name.charAt(0).toUpperCase()}
-                                </div>
-                                <div className="ml-3 text-left flex-1 min-w-0">
-                                    <div className="text-sm font-medium text-white truncate">
-                                        {user.name}
-                                    </div>
-                                    <div className="text-xs text-gray-400 truncate">
-                                        {user.email}
-                                    </div>
-                                    <div
-                                        className={`mt-1 inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${getRoleColor(
-                                            user.role
-                                        )}`}
-                                    >
-                                        {getRoleText(user.role)}
-                                    </div>
-                                </div>
-                                <svg
-                                    className="h-5 w-5 text-gray-400 flex-shrink-0"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                >
-                                    <path
-                                        fillRule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clipRule="evenodd"
-                                    />
-                                </svg>
-                            </button>
-                        </Dropdown.Trigger>
-
-                        <Dropdown.Content width="48" align="right">
-                            <div className="px-4 py-3 border-b border-gray-100">
-                                <div className="text-sm font-medium text-dark">
+                    <div className="flex flex-col space-y-3">
+                        {/* User Info */}
+                        <div className="flex items-center">
+                            <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold flex-shrink-0">
+                                {user.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="ml-3 text-left flex-1 min-w-0">
+                                <div className="text-sm font-medium text-white truncate">
                                     {user.name}
                                 </div>
-                                <div className="text-xs text-gray-500 truncate">
+                                <div className="text-xs text-gray-400 truncate">
                                     {user.email}
                                 </div>
                                 <div
-                                    className={`mt-1 inline-flex px-2 py-1 rounded-full text-xs font-semibold ${getRoleColor(
+                                    className={`mt-1 inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${getRoleColor(
                                         user.role
                                     )}`}
                                 >
                                     {getRoleText(user.role)}
                                 </div>
                             </div>
+                        </div>
 
-                            <Dropdown.Link
+                        {/* Profile and Logout Buttons */}
+                        <div className="flex flex-col space-y-2">
+                            <Link
                                 href={route("profile.edit")}
-                                className="flex items-center"
+                                className="flex items-center px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors duration-200"
                             >
                                 <svg
-                                    className="w-4 h-4 mr-2 text-gray-400"
+                                    className="w-4 h-4 mr-2"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -393,15 +372,15 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                     />
                                 </svg>
                                 {t.profile}
-                            </Dropdown.Link>
+                            </Link>
 
                             {(user.is_admin || user.is_agent) && (
-                                <Dropdown.Link
+                                <Link
                                     href={route("settings.index")}
-                                    className="flex items-center"
+                                    className="flex items-center px-3 py-2 text-sm text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-colors duration-200"
                                 >
                                     <svg
-                                        className="w-4 h-4 mr-2 text-gray-400"
+                                        className="w-4 h-4 mr-2"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -420,34 +399,34 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                         />
                                     </svg>
                                     {t.settings}
-                                </Dropdown.Link>
+                                </Link>
                             )}
 
-                            <div className="border-t border-gray-100"></div>
-
-                            <Dropdown.Link
-                                href={route("logout")}
-                                method="post"
-                                as="button"
-                                className="flex items-center text-red-600 hover:text-red-700"
-                            >
-                                <svg
-                                    className="w-4 h-4 mr-2"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                            <div className="border-t border-gray-800 pt-2">
+                                <Link
+                                    href={route("logout")}
+                                    method="post"
+                                    as="button"
+                                    className="flex items-center px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-900/20 rounded-lg transition-colors duration-200 w-full text-left"
                                 >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                    />
-                                </svg>
-                                {t.logout}
-                            </Dropdown.Link>
-                        </Dropdown.Content>
-                    </Dropdown>
+                                    <svg
+                                        className="w-4 h-4 mr-2"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                        />
+                                    </svg>
+                                    {t.logout}
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -464,10 +443,20 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 </Link>
                             </div>
 
-                            {/* Mobile menu button and User Dropdown */}
+                            {/* Mobile menu button and User Info */}
                             <div className="flex items-center space-x-4">
                                 {/* Mobile Language Switcher */}
                                 <LanguageSwitcher darkMode={true} />
+
+                                {/* User Info */}
+                                <div className="flex items-center">
+                                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm">
+                                        {user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span className="ml-2 text-sm text-white font-medium hidden sm:block">
+                                        {user.name}
+                                    </span>
+                                </div>
 
                                 {/* Mobile menu button */}
                                 <div className="flex items-center">
@@ -561,7 +550,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         </div>
 
                         <div className="pt-4 pb-3 border-t border-gray-800">
-                            <div className="flex items-center px-5">
+                            <div className="flex items-center px-5 mb-4">
                                 <div className="flex-shrink-0">
                                     <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                                         {user.name.charAt(0).toUpperCase()}
@@ -583,10 +572,11 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                     </div>
                                 </div>
                             </div>
-                            <div className="mt-3 px-2 space-y-1">
+
+                            <div className="mt-3 px-2 space-y-2">
                                 <ResponsiveNavLink
                                     href={route("profile.edit")}
-                                    className="flex items-center text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-3 py-2"
+                                    className="flex items-center text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-3 py-3"
                                 >
                                     <svg
                                         className="w-4 h-4 mr-2"
@@ -607,7 +597,7 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 {(user.is_admin || user.is_agent) && (
                                     <ResponsiveNavLink
                                         href={route("settings.index")}
-                                        className="flex items-center text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-3 py-2"
+                                        className="flex items-center text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg px-3 py-3"
                                     >
                                         <svg
                                             className="w-4 h-4 mr-2"
@@ -632,27 +622,29 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                     </ResponsiveNavLink>
                                 )}
 
-                                <ResponsiveNavLink
-                                    method="post"
-                                    href={route("logout")}
-                                    as="button"
-                                    className="flex items-center text-red-400 hover:text-red-300 hover:bg-gray-800 rounded-lg px-3 py-2 w-full text-left"
-                                >
-                                    <svg
-                                        className="w-4 h-4 mr-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
+                                <div className="border-t border-gray-800 pt-2">
+                                    <ResponsiveNavLink
+                                        method="post"
+                                        href={route("logout")}
+                                        as="button"
+                                        className="flex items-center text-red-400 hover:text-red-300 hover:bg-gray-800 rounded-lg px-3 py-3 w-full text-left"
                                     >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                        />
-                                    </svg>
-                                    {t.logout}
-                                </ResponsiveNavLink>
+                                        <svg
+                                            className="w-4 h-4 mr-2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                            />
+                                        </svg>
+                                        {t.logout}
+                                    </ResponsiveNavLink>
+                                </div>
                             </div>
                         </div>
                     </div>

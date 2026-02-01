@@ -25,8 +25,8 @@ class Property extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
-        'size' => 'decimal:2',
+        'price' => 'decimal:0',
+        'size' => 'decimal:0',
     ];
 
     // Relationships
@@ -74,7 +74,7 @@ class Property extends Model
     // Accessors and Mutators
     public function getFormattedPriceAttribute()
     {
-        return 'KSh ' . number_format($this->price, 2);
+        return '$ ' . number_format($this->price, 2);
     }
 
     public function getFormattedSizeAttribute()

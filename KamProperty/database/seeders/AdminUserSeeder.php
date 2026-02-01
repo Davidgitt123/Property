@@ -37,23 +37,6 @@ class AdminUserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        // Now create owners using the variables
-        $owner1 = Owner::create([
-            'name' => 'Sothoong',
-            'email' => 'sothong@example.com',
-            'phone' => '+254712345678',
-            'address' => '123 Main St, Nairobi',
-            'user_id' => $admin->id,  // This will work now
-        ]);
-
-        $owner2 = Owner::create([
-            'name' => 'Kim Hong',
-            'email' => 'kimhong@example.com',
-            'phone' => '+254798765432',
-            'address' => '456 Park Ave, Mombasa',
-            'user_id' => $agent->id,  // This will work now
-        ]);
-
         // Create sample properties
         Property::create([
             'title' => 'Modern Apartment in Westlands',
@@ -64,7 +47,6 @@ class AdminUserSeeder extends Seeder
             'description' => 'Beautiful modern apartment with great views.',
             'status' => 'For Sale',
             'user_id' => $agent->id,
-            'owner_id' => $owner1->id,
         ]);
 
         Property::create([
@@ -76,7 +58,7 @@ class AdminUserSeeder extends Seeder
             'description' => 'Spacious luxury villa with swimming pool and garden.',
             'status' => 'For Sale',
             'user_id' => $admin->id,
-            'owner_id' => $owner2->id,
+            
         ]);
 
         Property::create([
@@ -88,7 +70,7 @@ class AdminUserSeeder extends Seeder
             'description' => 'Prime office space in the heart of the city.',
             'status' => 'For Rent',
             'user_id' => $agent->id,
-            'owner_id' => $owner1->id,
+           
         ]);
 
         Property::create([
@@ -100,7 +82,7 @@ class AdminUserSeeder extends Seeder
             'description' => 'Prime commercial land suitable for development.',
             'status' => 'For Sale',
             'user_id' => $admin->id,
-            'owner_id' => $owner2->id,
+          
         ]);
     }
 }

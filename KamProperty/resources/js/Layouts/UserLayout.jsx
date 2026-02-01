@@ -1,65 +1,119 @@
-import React, { useState } from 'react';
-import ApplicationLogo from '@/Components/ApplicationLogo';
-import Dropdown from '@/Components/Dropdown';
-import NavLink from '@/Components/NavLink';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import LanguageSwitcher from '@/Components/LanguageSwitcher';
-import { Link } from '@inertiajs/react';
-import { useLanguage } from '@/contexts/LanguageContext';
+import React, { useState } from "react";
+import ApplicationLogo from "@/Components/ApplicationLogo";
+import Dropdown from "@/Components/Dropdown";
+import NavLink from "@/Components/NavLink";
+import ResponsiveNavLink from "@/Components/ResponsiveNavLink";
+import LanguageSwitcher from "@/Components/LanguageSwitcher";
+import { Link, usePage } from "@inertiajs/react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function UserLayout({ user, header, children }) {
-    const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const [showingNavigationDropdown, setShowingNavigationDropdown] =
+        useState(false);
     const { language } = useLanguage();
+    const { url } = usePage();
 
     const translations = {
         en: {
-            dashboard: 'Dashboard',
-            properties: 'Properties',
-            favorites: 'Favorites',
-            inquiries: 'Inquiries',
-            profile: 'Profile',
-            logout: 'Log Out',
+            dashboard: "Dashboard",
+            properties: "Properties",
+            browseProperties: "Browse Properties",
+            myProperties: "My Properties",
+            favorites: "Favorites",
+            inquiries: "Inquiries",
+            profile: "Profile",
+            logout: "Log Out",
+            home: "Home",
         },
         kh: {
-            dashboard: 'ផ្ទាំងគ្រប់គ្រង',
-            properties: 'អចលនទ្រព្យ',
-            favorites: 'ចំណូលចិត្ត',
-            inquiries: 'ការស្នើសុំ',
-            profile: 'ប្រវត្តិរូប',
-            logout: 'ចាកចេញ',
-        }
+            dashboard: "ផ្ទាំងគ្រប់គ្រង",
+            properties: "អចលនទ្រព្យ",
+            browseProperties: "មើលទ្រព្យសម្បត្តិ",
+            myProperties: "ទ្រព្យសម្បត្តិរបស់ខ្ញុំ",
+            favorites: "ចំណូលចិត្ត",
+            inquiries: "ការស្នើសុំ",
+            profile: "ប្រវត្តិរូប",
+            logout: "ចាកចេញ",
+            home: "ទំព័រដើម",
+        },
     };
 
     const t = translations[language];
 
     const getNavigationItems = () => {
-        return [
-            { name: t.dashboard, href: route('homepage'), current: route().current('homepage') },
-            { name: t.properties, href: route('properties.index'), current: route().current('properties.*') },
-            { name: t.favorites, href: '#', current: false },
-            { name: t.inquiries, href: '#', current: false },
+        const items = [
+            {
+                name: t.home,
+                href: route("homepage"),
+                current: route().current("homepage"),
+            },
+            {
+                name: t.browseProperties,
+                href: route("home.properties.browse"),
+                current: route().current("home.properties.*"),
+            },
         ];
+
+        // Add "My Properties" if user is admin or agent (links to admin route)
+        if (user?.is_admin || user?.is_agent) {
+            items.push({
+                name: t.myProperties,
+                href: route("properties.my"),
+                current: route().current("properties.my"),
+            });
+
+            // Also add "Manage Properties" for admin/agents to access admin panel
+            items.push({
+                name: t.manageProperties,
+                href: route("properties.index"),
+                current:
+                    route().current("properties.index") &&
+                    !route().current("home.properties.*"),
+            });
+        }
+
+        items.push(
+            { name: t.favorites, href: "#", current: false },
+            { name: t.inquiries, href: "#", current: false }
+        );
+
+        return items;
     };
+
+    const navigationItems = getNavigationItems();
 
     return (
         <div className="min-h-screen bg-gray-50">
             <nav className="bg-dark border-b border-gray-200">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
-                        {/* Logo */}
+                        {/* Logo and Navigation */}
                         <div className="flex items-center">
-                            <Link href="/">
-                                <ApplicationLogo className="h-9 w-auto fill-current text-dark" />
+                            <Link href="/home">
+                                <ApplicationLogo className="h-9 w-auto fill-current text-white" />
                             </Link>
-                            
-                           
+
+                            {/* Primary Navigation */}
+                            <div className="hidden sm:-my-px sm:ms-10 sm:flex">
+                                {navigationItems.map((item) => (
+                                    <NavLink
+                                        key={item.name}
+                                        href={item.href}
+                                        active={
+                                            item.current ||
+                                            url.startsWith(item.href)
+                                        }
+                                        className="text-white hover:text-primary transition-colors duration-200"
+                                    >
+                                        {item.name}
+                                    </NavLink>
+                                ))}
+                            </div>
                         </div>
 
-                        
-        
                         {/* User Dropdown */}
                         <div className="hidden sm:flex sm:items-center sm:ms-6">
-                             {/* Language Switcher */}
+                            {/* Language Switcher */}
                             <div className="ml-4">
                                 <LanguageSwitcher />
                             </div>
@@ -72,7 +126,9 @@ export default function UserLayout({ user, header, children }) {
                                                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-transparent hover:text-primary focus:outline-none transition ease-in-out duration-150"
                                             >
                                                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-white font-bold mr-2">
-                                                    {user.name.charAt(0).toUpperCase()}
+                                                    {user.name
+                                                        .charAt(0)
+                                                        .toUpperCase()}
                                                 </div>
                                                 {user.name}
                                                 <svg
@@ -92,10 +148,16 @@ export default function UserLayout({ user, header, children }) {
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link href={route('profile.edit')}>
+                                        <Dropdown.Link
+                                            href={route("profile.edit")}
+                                        >
                                             {t.profile}
                                         </Dropdown.Link>
-                                        <Dropdown.Link href={route('logout')} method="post" as="button">
+                                        <Dropdown.Link
+                                            href={route("logout")}
+                                            method="post"
+                                            as="button"
+                                        >
                                             {t.logout}
                                         </Dropdown.Link>
                                     </Dropdown.Content>
@@ -106,19 +168,36 @@ export default function UserLayout({ user, header, children }) {
                         {/* Mobile menu button */}
                         <div className="-me-2 flex items-center sm:hidden">
                             <button
-                                onClick={() => setShowingNavigationDropdown((previousState) => !previousState)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400"
+                                onClick={() =>
+                                    setShowingNavigationDropdown(
+                                        (previousState) => !previousState
+                                    )
+                                }
+                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:bg-gray-700 focus:text-white transition duration-150 ease-in-out"
                             >
-                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                <svg
+                                    className="h-6 w-6"
+                                    stroke="currentColor"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
                                     <path
-                                        className={!showingNavigationDropdown ? 'inline-flex' : 'hidden'}
+                                        className={
+                                            !showingNavigationDropdown
+                                                ? "inline-flex"
+                                                : "hidden"
+                                        }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                         strokeWidth="2"
                                         d="M4 6h16M4 12h16M4 18h16"
                                     />
                                     <path
-                                        className={showingNavigationDropdown ? 'inline-flex' : 'hidden'}
+                                        className={
+                                            showingNavigationDropdown
+                                                ? "inline-flex"
+                                                : "hidden"
+                                        }
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
                                         strokeWidth="2"
@@ -131,20 +210,59 @@ export default function UserLayout({ user, header, children }) {
                 </div>
 
                 {/* Mobile menu */}
-                <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
-                    
+                <div
+                    className={
+                        (showingNavigationDropdown ? "block" : "hidden") +
+                        " sm:hidden"
+                    }
+                >
+                    <div className="pt-2 pb-3 space-y-1">
+                        {navigationItems.map((item) => (
+                            <ResponsiveNavLink
+                                key={item.name}
+                                href={item.href}
+                                active={
+                                    item.current || url.startsWith(item.href)
+                                }
+                                onClick={() =>
+                                    setShowingNavigationDropdown(false)
+                                }
+                                className="text-white hover:bg-gray-700 hover:text-white"
+                            >
+                                {item.name}
+                            </ResponsiveNavLink>
+                        ))}
+                    </div>
 
-                    <div className="pt-4 pb-1 border-t border-gray-200">
+                    <div className="pt-4 pb-1 border-t border-gray-700">
                         <div className="px-4">
-                            <div className="font-medium text-base text-white">{user.name}</div>
-                            
+                            <div className="font-medium text-base text-white">
+                                {user.name}
+                            </div>
+                            <div className="font-medium text-sm text-gray-400">
+                                {user.email}
+                            </div>
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('profile.edit')}>
+                            <ResponsiveNavLink
+                                href={route("profile.edit")}
+                                onClick={() =>
+                                    setShowingNavigationDropdown(false)
+                                }
+                                className="text-white hover:bg-gray-700 hover:text-white"
+                            >
                                 {t.profile}
                             </ResponsiveNavLink>
-                            <ResponsiveNavLink method="post" href={route('logout')} as="button">
+                            <ResponsiveNavLink
+                                method="post"
+                                href={route("logout")}
+                                as="button"
+                                onClick={() =>
+                                    setShowingNavigationDropdown(false)
+                                }
+                                className="w-full text-left text-white hover:bg-gray-700 hover:text-white"
+                            >
                                 {t.logout}
                             </ResponsiveNavLink>
                         </div>

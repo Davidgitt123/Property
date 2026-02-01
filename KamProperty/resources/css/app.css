@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Moul&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Moul&family=Kantumruy+Pro:wght@300;400;500;600;700&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -6,13 +6,13 @@
 
 /* Base styles with font families */
 body {
-    font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+    font-family: "Inter", "Kantumruy Pro", sans-serif;
     @apply bg-light text-dark;
 }
 
 /* Khmer font class */
 .font-khmer {
-    font-family: 'Moul', 'Kantumruy Pro', sans-serif;
+    font-family: "Moul", "Kantumruy Pro", sans-serif;
 }
 
 /* Custom color classes */
@@ -76,7 +76,8 @@ body {
 
 /* Smooth transitions */
 * {
-    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease,
+        color 0.3s ease;
 }
 
 /* Custom shadows */
@@ -124,7 +125,7 @@ body {
 
 .auth-divider::before {
     @apply absolute inset-0 flex items-center;
-    content: '';
+    content: "";
 }
 
 .auth-divider span {
@@ -136,22 +137,22 @@ body {
     @apply w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors duration-200;
 }
 .page-transition-enter {
-  opacity: 0;
-  transform: translateX(-10px);
+    opacity: 0;
+    transform: translateX(-10px);
 }
 .page-transition-enter-active {
-  opacity: 1;
-  transform: translateX(0);
-  transition: opacity 300ms, transform 300ms;
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 300ms, transform 300ms;
 }
 .page-transition-exit {
-  opacity: 1;
-  transform: translateX(0);
+    opacity: 1;
+    transform: translateX(0);
 }
 .page-transition-exit-active {
-  opacity: 0;
-  transform: translateX(10px);
-  transition: opacity 300ms, transform 300ms;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: opacity 300ms, transform 300ms;
 }
 /* 2:1 Aspect Ratio Styles */
 .aspect-\[2\/1\] {

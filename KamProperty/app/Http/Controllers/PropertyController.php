@@ -11,6 +11,178 @@ use Inertia\Inertia;
 class PropertyController extends Controller
 {
     /**
+     * Display a listing of properties for user browsing.
+     */
+    public function browse(Request $request)
+    {
+        $query = Property::query()->with(['owner:id,name']);
+
+        // Apply filters
+        if ($request->has('type') && $request->type !== 'all') {
+            $query->byType($request->type);
+        }
+
+        if ($request->has('status') && $request->status !== 'all') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('location') && $request->location) {
+            $query->byLocation($request->location);
+        }
+
+        if ($request->has('min_price') && $request->min_price) {
+            $query->where('price', '>=', $request->min_price);
+        }
+
+        if ($request->has('max_price') && $request->max_price) {
+            $query->where('price', '<=', $request->max_price);
+        }
+
+        // Apply sorting
+        switch ($request->get('sort_by', 'newest')) {
+            case 'price_low_high':
+                $query->orderBy('price', 'asc');
+                break;
+            case 'price_high_low':
+                $query->orderBy('price', 'desc');
+                break;
+            default:
+                $query->latest();
+                break;
+        }
+
+        // Get paginated properties (12 per page for better browsing)
+        $properties = $query->paginate(12)->withQueryString();
+
+        // Transform properties for user display
+        $properties->getCollection()->transform(function ($property) {
+            return [
+                'id' => $property->id,
+                'title' => $property->title,
+                'type' => $property->type,
+                'price' => $property->price,
+                'formatted_price' => '$' . number_format($property->price, 0),
+                'location' => $property->location,
+                'size' => $property->size,
+                'formatted_size' => number_format($property->size) . ' sqm',
+                'description' => $property->description,
+                'short_description' => $property->short_description,
+                'status' => $property->status,
+                'image' => $property->image,
+                'image_url' => $property->image_url,
+                'is_wide_image' => $property->is_wide_image,
+                'bedrooms' => $property->bedrooms ?? 3, // Default value if not in your DB
+                'bathrooms' => $property->bathrooms ?? 2, // Default value if not in your DB
+                'owner' => $property->owner,
+                'created_at' => $property->created_at->format('M d, Y'),
+                'updated_at' => $property->updated_at->format('M d, Y'),
+            ];
+        });
+
+        // Get property counts for filters
+        $propertyCounts = [
+            'all' => Property::count(),
+            'House' => Property::where('type', 'House')->count(),
+            'Apartment' => Property::where('type', 'Apartment')->count(),
+            'Land' => Property::where('type', 'Land')->count(),
+            'Office' => Property::where('type', 'Office')->count(),
+            'For Sale' => Property::where('status', 'For Sale')->count(),
+            'For Rent' => Property::where('status', 'For Rent')->count(),
+        ];
+
+        return Inertia::render('Properties', [
+            'properties' => $properties,
+            'filters' => $request->only(['type', 'status', 'location', 'min_price', 'max_price', 'sort_by']),
+            'propertyCounts' => $propertyCounts,
+            'stats' => [
+                'total' => $propertyCounts['all'],
+                'for_sale' => $propertyCounts['For Sale'],
+                'for_rent' => $propertyCounts['For Rent'],
+            ]
+        ]);
+    }
+
+    /**
+     * Display a single property for user viewing.
+     */
+    public function show(Property $property)
+    {
+        // Load relationships
+        $property->load(['owner:id,name,phone,email', 'user:id,name,email']);
+
+        // Add computed attributes
+        $propertyData = [
+            'id' => $property->id,
+            'title' => $property->title,
+            'type' => $property->type,
+            'price' => $property->price,
+            'formatted_price' => '$' . number_format($property->price, 0),
+            'location' => $property->location,
+            'size' => $property->size,
+            'formatted_size' => number_format($property->size) . ' sqm',
+            'description' => $property->description,
+            'status' => $property->status,
+            'image' => $property->image,
+            'image_url' => $property->image_url,
+            'is_wide_image' => $property->is_wide_image,
+            'owner' => $property->owner,
+            'agent' => $property->user,
+            'created_at' => $property->created_at->format('F d, Y'),
+            'features' => $this->getPropertyFeatures($property),
+        ];
+
+        // Get related properties
+        $relatedProperties = Property::where('type', $property->type)
+            ->where('id', '!=', $property->id)
+            ->where('status', $property->status)
+            ->limit(4)
+            ->get()
+            ->map(function ($prop) {
+                return [
+                    'id' => $prop->id,
+                    'title' => $prop->title,
+                    'price' => $prop->price,
+                    'formatted_price' => '$' . number_format($prop->price, 0),
+                    'location' => $prop->location,
+                    'image_url' => $prop->image_url,
+                    'status' => $prop->status,
+                ];
+            });
+
+        return Inertia::render('Properties/Show', [
+            'property' => $propertyData,
+            'relatedProperties' => $relatedProperties,
+        ]);
+    }
+
+    /**
+     * Get property features based on type (you can customize this)
+     */
+    private function getPropertyFeatures(Property $property)
+    {
+        $baseFeatures = [
+            'Parking' => $property->type === 'House' ? 'Garage' : ($property->type === 'Apartment' ? 'Underground' : 'Available'),
+            'Security' => '24/7 Security',
+            'Year Built' => '2020',
+        ];
+
+        if ($property->type === 'House') {
+            $baseFeatures['Bedrooms'] = '3-4';
+            $baseFeatures['Bathrooms'] = '2-3';
+            $baseFeatures['Garden'] = 'Yes';
+        } elseif ($property->type === 'Apartment') {
+            $baseFeatures['Bedrooms'] = '1-3';
+            $baseFeatures['Bathrooms'] = '1-2';
+            $baseFeatures['Balcony'] = 'Yes';
+        } elseif ($property->type === 'Office') {
+            $baseFeatures['Floor'] = '5th';
+            $baseFeatures['Capacity'] = '10-20 people';
+            $baseFeatures['Meeting Rooms'] = '2';
+        }
+
+        return $baseFeatures;
+    }
+    /**
      * Display a listing of properties.
      */
     public function index(Request $request)
@@ -145,33 +317,7 @@ class PropertyController extends Controller
     /**
      * Display the specified property.
      */
-    public function show(Property $property)
-    {
-        $property->load(['user:id,name,email,phone', 'owner:id,name,phone,email']);
 
-        // Add computed attributes
-        $property->image_url = $property->image_url;
-        $property->is_wide_image = $property->is_wide_image;
-        $property->formatted_price = $property->formatted_price;
-        $property->formatted_size = $property->formatted_size;
-
-        $relatedProperties = Property::where('type', $property->type)
-            ->where('id', '!=', $property->id)
-            ->where('image_ratio', '2:1') // Only show wide images in related
-            ->limit(4)
-            ->get()
-            ->map(function ($prop) {
-                $prop->image_url = $prop->image_url;
-                $prop->formatted_price = $prop->formatted_price;
-                $prop->formatted_size = $prop->formatted_size;
-                return $prop;
-            });
-
-        return Inertia::render('Properties/Show', [
-            'property' => $property,
-            'relatedProperties' => $relatedProperties,
-        ]);
-    }
 
     /**
      * Show the form for editing the specified property.
