@@ -105,11 +105,11 @@ class PropertyController extends Controller
     /**
      * Display a single property for user viewing.
      */
-    public function show(Property $property)
+    public function userShow(Property $property)
     {
         // Load relationships
-        $property->load(['owner:id,name,phone,email', 'user:id,name,email']);
-
+        $property->load(['user:id,name,email,phone', 'owner:id,name,phone,email']);
+        
         // Add computed attributes
         $propertyData = [
             'id' => $property->id,
@@ -125,17 +125,18 @@ class PropertyController extends Controller
             'image' => $property->image,
             'image_url' => $property->image_url,
             'is_wide_image' => $property->is_wide_image,
+            'bedrooms' => $property->bedrooms ?? 3,
+            'bathrooms' => $property->bathrooms ?? 2,
+            'user' => $property->user, // This ensures user is available
             'owner' => $property->owner,
-            'agent' => $property->user,
             'created_at' => $property->created_at->format('F d, Y'),
-            'features' => $this->getPropertyFeatures($property),
+            'images' => [$property->image_url] // You can modify this to get multiple images
         ];
 
         // Get related properties
         $relatedProperties = Property::where('type', $property->type)
             ->where('id', '!=', $property->id)
-            ->where('status', $property->status)
-            ->limit(4)
+            ->limit(3)
             ->get()
             ->map(function ($prop) {
                 return [
@@ -145,15 +146,50 @@ class PropertyController extends Controller
                     'formatted_price' => '$' . number_format($prop->price, 0),
                     'location' => $prop->location,
                     'image_url' => $prop->image_url,
+                    'type' => $prop->type,
                     'status' => $prop->status,
                 ];
             });
 
-        return Inertia::render('Properties/Show', [
+        return Inertia::render('PropertiesView', [
             'property' => $propertyData,
             'relatedProperties' => $relatedProperties,
         ]);
     }
+
+    /**
+     * Display the specified property for ADMIN VIEWING.
+     */
+    public function adminShow(Property $property)
+    {
+        $user = Auth::user();
+        
+        // Check authorization: admin can view all, agents can only view their own properties
+        if (!$user->is_admin && (!$user->is_agent || $property->user_id !== $user->id)) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $property->load(['user:id,name,email', 'owner:id,name,phone,email']);
+
+        // Add computed attributes
+        $property->image_url = $property->image_url;
+        $property->is_wide_image = $property->is_wide_image;
+        $property->formatted_price = $property->formatted_price;
+        $property->formatted_size = $property->formatted_size;
+
+        $owners = \App\Models\Owner::all();
+
+        return Inertia::render('Properties/Show', [
+            'property' => $property,
+            'owners' => $owners,
+        ]);
+    }
+
+    /**
+     * Display a listing of properties for user browsing.
+     */
+    
+
 
     /**
      * Get property features based on type (you can customize this)

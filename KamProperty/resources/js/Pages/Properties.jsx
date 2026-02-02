@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import UserLayout from "@/Layouts/UserLayout";
 import { Head, Link, router } from "@inertiajs/react";
 import PrimaryButton from "@/Components/PrimaryButton";
@@ -9,25 +9,23 @@ import {
     FaFilter,
     FaHome,
     FaBuilding,
-    FaCity,
-    FaLandmark,
     FaMapMarkerAlt,
     FaBed,
     FaBath,
     FaRulerCombined,
     FaChevronDown,
     FaChevronUp,
+    FaHeart,
+    FaStar,
 } from "react-icons/fa";
-
-// Correct imports - use what's actually available in react-icons/md
 import { MdApartment, MdLandscape } from "react-icons/md";
-// Or use FaBuilding as office icon
-const MdOfficeBuilding = FaBuilding; // Fallback to FaBuilding
 
-// Alternatively, you can import from the correct location:
-// import { MdCorporateFare } from 'react-icons/md'; // If MdCorporateFare exists
-
-export default function Properties({ auth, properties, filters }) {
+export default function Properties({
+    auth,
+    properties,
+    filters,
+    propertyCounts = {},
+}) {
     const { language } = useLanguage();
     const [showFilters, setShowFilters] = useState(false);
     const [localFilters, setLocalFilters] = useState({
@@ -39,12 +37,11 @@ export default function Properties({ auth, properties, filters }) {
         sort_by: filters?.sort_by || "newest",
     });
 
-    // Rest of your component remains the same...
     const translations = {
         en: {
             title: "Browse Properties",
             subtitle: "Find your perfect home, apartment, land, or office",
-            searchPlaceholder: "Search properties...",
+            searchPlaceholder: "Search by location, type, or keyword...",
             filters: "Filters",
             clearFilters: "Clear Filters",
             applyFilters: "Apply Filters",
@@ -72,11 +69,15 @@ export default function Properties({ auth, properties, filters }) {
             bedrooms: "Bedrooms",
             bathrooms: "Bathrooms",
             size: "Size",
+            sqm: "sqm",
+            perMonth: "per month",
+            featured: "Featured",
+            saveToFavorites: "Save to Favorites",
         },
         kh: {
             title: "រាយទ្រព្យសម្បត្តិ",
             subtitle: "ស្វែងរកផ្ទះ អាផាតមិន ដី ឬការិយាល័យដ៏ល្អឥតខ្ចោះរបស់អ្នក",
-            searchPlaceholder: "ស្វែងរកទ្រព្យសម្បត្តិ...",
+            searchPlaceholder: "ស្វែងរកតាមទីតាំង ប្រភេទ ឬពាក្យគន្លឹះ...",
             filters: "តម្រង",
             clearFilters: "លុបតម្រង",
             applyFilters: "អនុវត្តតម្រង",
@@ -104,26 +105,60 @@ export default function Properties({ auth, properties, filters }) {
             bedrooms: "បន្ទប់គេង",
             bathrooms: "បន្ទប់ទឹក",
             size: "ទំហំ",
+            sqm: "ម៉ែត្រការ៉េ",
+            perMonth: "ក្នុងមួយខែ",
+            featured: "ពិសេស",
+            saveToFavorites: "រក្សាទុកក្នុងចំណូលចិត្ត",
         },
     };
 
     const t = translations[language];
 
-    // Use FaBuilding for offices instead of MdOfficeBuilding
     const propertyTypes = [
-        { value: "all", label: t.all, icon: FaFilter },
-        { value: "House", label: t.houses, icon: FaHome },
-        { value: "Apartment", label: t.apartments, icon: MdApartment },
-        { value: "Land", label: t.lands, icon: MdLandscape },
-        { value: "Office", label: t.offices, icon: FaBuilding }, // Changed to FaBuilding
+        {
+            value: "all",
+            label: t.all,
+            icon: FaFilter,
+            count: propertyCounts?.all || 0,
+        },
+        {
+            value: "House",
+            label: t.houses,
+            icon: FaHome,
+            count: propertyCounts?.House || 0,
+        },
+        {
+            value: "Apartment",
+            label: t.apartments,
+            icon: MdApartment,
+            count: propertyCounts?.Apartment || 0,
+        },
+        {
+            value: "Land",
+            label: t.lands,
+            icon: MdLandscape,
+            count: propertyCounts?.Land || 0,
+        },
+        {
+            value: "Office",
+            label: t.offices,
+            icon: FaBuilding,
+            count: propertyCounts?.Office || 0,
+        },
     ];
 
-    // ... rest of your component code
-
     const statusOptions = [
-        { value: "all", label: t.all },
-        { value: "For Sale", label: t.forSale },
-        { value: "For Rent", label: t.forRent },
+        { value: "all", label: t.all, count: propertyCounts?.all || 0 },
+        {
+            value: "For Sale",
+            label: t.forSale,
+            count: propertyCounts?.["For Sale"] || 0,
+        },
+        {
+            value: "For Rent",
+            label: t.forRent,
+            count: propertyCounts?.["For Rent"] || 0,
+        },
     ];
 
     const sortOptions = [
@@ -160,6 +195,20 @@ export default function Properties({ auth, properties, filters }) {
             preserveState: true,
             preserveScroll: true,
         });
+    };
+
+    const getTranslatedStatus = (status) => {
+        return status === "For Sale" ? t.forSale : t.forRent;
+    };
+
+    const getTranslatedType = (type) => {
+        const typeMap = {
+            House: t.houses,
+            Apartment: t.apartments,
+            Land: t.lands,
+            Office: t.offices,
+        };
+        return typeMap[type] || type;
     };
 
     return (
@@ -281,6 +330,9 @@ export default function Properties({ auth, properties, filters }) {
                                                 >
                                                     <Icon />
                                                     <span>{type.label}</span>
+                                                    <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                                                        {type.count}
+                                                    </span>
                                                 </button>
                                             );
                                         })}
@@ -302,14 +354,17 @@ export default function Properties({ auth, properties, filters }) {
                                                         status.value
                                                     )
                                                 }
-                                                className={`px-4 py-2 rounded-full border transition-colors ${
+                                                className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-colors ${
                                                     localFilters.status ===
                                                     status.value
                                                         ? "bg-primary text-white border-primary"
                                                         : "bg-white text-dark border-gray-300 hover:border-primary"
                                                 }`}
                                             >
-                                                {status.label}
+                                                <span>{status.label}</span>
+                                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                                                    {status.count}
+                                                </span>
                                             </button>
                                         ))}
                                     </div>
@@ -400,18 +455,25 @@ export default function Properties({ auth, properties, filters }) {
                                 {properties.data.map((property) => (
                                     <div
                                         key={property.id}
-                                        className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100"
+                                        className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 group"
                                     >
                                         {/* Property Image */}
                                         <div className="relative h-64">
-                                            <img
-                                                src={
-                                                    property.image_url ||
-                                                    property.image
-                                                }
-                                                alt={property.title}
-                                                className="w-full h-full object-cover"
-                                            />
+                                            <Link
+                                                href={route(
+                                                    "home.properties.show",
+                                                    property.id
+                                                )}
+                                            >
+                                                <img
+                                                    src={
+                                                        property.image_url ||
+                                                        property.image
+                                                    }
+                                                    alt={property.title}
+                                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                                />
+                                            </Link>
                                             <div className="absolute top-4 right-4">
                                                 <span
                                                     className={`px-3 py-1 rounded-full text-sm font-semibold ${
@@ -421,28 +483,40 @@ export default function Properties({ auth, properties, filters }) {
                                                             : "bg-blue-500 text-white"
                                                     }`}
                                                 >
-                                                    {property.status}
+                                                    {getTranslatedStatus(
+                                                        property.status
+                                                    )}
                                                 </span>
                                             </div>
                                             <div className="absolute bottom-4 left-4">
                                                 <span className="px-3 py-1 bg-dark/80 text-white rounded-full text-sm">
-                                                    {property.type}
+                                                    {getTranslatedType(
+                                                        property.type
+                                                    )}
                                                 </span>
                                             </div>
+                                            {property.featured && (
+                                                <div className="absolute top-4 left-4">
+                                                    <span className="px-3 py-1 bg-yellow-500 text-white rounded-full text-sm font-semibold">
+                                                        <FaStar className="inline mr-1" />
+                                                        {t.featured}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
 
                                         {/* Property Details */}
                                         <div className="p-6">
-                                            <h3 className="text-xl font-bold mb-2 text-dark hover:text-primary transition-colors cursor-pointer">
-                                                <Link
-                                                    href={route(
-                                                        "properties.show",
-                                                        property.id
-                                                    )}
-                                                >
+                                            <Link
+                                                href={route(
+                                                    "home.properties.show",
+                                                    property.id
+                                                )}
+                                            >
+                                                <h3 className="text-xl font-bold mb-2 text-dark group-hover:text-primary transition-colors">
                                                     {property.title}
-                                                </Link>
-                                            </h3>
+                                                </h3>
+                                            </Link>
 
                                             <div className="flex items-center text-gray-600 mb-4">
                                                 <FaMapMarkerAlt className="mr-2 text-primary" />
@@ -482,7 +556,7 @@ export default function Properties({ auth, properties, filters }) {
                                                         <FaRulerCombined className="text-primary" />
                                                         <span>
                                                             {property.formatted_size ||
-                                                                `${property.size} sqm`}
+                                                                `${property.size} ${t.sqm}`}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -497,21 +571,35 @@ export default function Properties({ auth, properties, filters }) {
                                                     {property.status ===
                                                         "For Rent" && (
                                                         <div className="text-gray-500 text-sm">
-                                                            {language === "en"
-                                                                ? "per month"
-                                                                : "ក្នុងមួយខែ"}
+                                                            {t.perMonth}
                                                         </div>
                                                     )}
                                                 </div>
-                                                <Link
-                                                    href={route(
-                                                        "properties.show",
-                                                        property.id
-                                                    )}
-                                                    className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors"
-                                                >
-                                                    {t.viewDetails}
-                                                </Link>
+                                                <div className="flex gap-2">
+                                                    <button
+                                                        onClick={() =>
+                                                            console.log(
+                                                                "Save to favorites:",
+                                                                property.id
+                                                            )
+                                                        }
+                                                        className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+                                                        title={
+                                                            t.saveToFavorites
+                                                        }
+                                                    >
+                                                        <FaHeart />
+                                                    </button>
+                                                    <Link
+                                                        href={route(
+                                                            "home.properties.show",
+                                                            property.id
+                                                        )}
+                                                        className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition-colors"
+                                                    >
+                                                        {t.viewDetails}
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>

@@ -29,6 +29,8 @@ export default function Index({
     // Modal states
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showDetailModal, setShowDetailModal] = useState(false);
+    const [selectedProperty, setSelectedProperty] = useState(null);
     const [editingProperty, setEditingProperty] = useState(null);
     const [imagePreview, setImagePreview] = useState(
         "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&h=400&fit=crop"
@@ -77,6 +79,7 @@ export default function Index({
             resetFilters: "Reset Filters",
             wide: "Wide",
             forSale: "For Sale",
+            forRent: "For Rent",
             viewDetails: "View Details",
             edit: "Edit",
             delete: "Delete",
@@ -138,6 +141,20 @@ export default function Index({
             noDescription: "No description available",
             deleteConfirm: "Are you sure you want to delete this property?",
             flashSuccess: "Operation successful",
+            // Detail Modal Translations
+            propertyDetails: "Property Details",
+            descriptionLabel: "Description",
+            agentInformation: "Agent Information",
+            interestedInProperty: "Interested in this property?",
+            yourName: "Your Name",
+            emailAddress: "Email Address",
+            phoneNumber: "Phone Number",
+            message: "Message",
+            sendInquiry: "Send Inquiry",
+            similarProperties: "Similar Properties",
+            backToProperties: "Back to Properties",
+            close: "Close",
+            tellUsMore: "Tell us more about your interest...",
         },
         kh: {
             title: "អចលនទ្រព្យ",
@@ -165,6 +182,7 @@ export default function Index({
             resetFilters: "កំណត់ឡើងវិញ",
             wide: "ទទឹង",
             forSale: "លក់",
+            forRent: "ជួល",
             viewDetails: "មើលព័ត៌មានលម្អិត",
             edit: "កែសម្រួល",
             delete: "លុប",
@@ -226,6 +244,20 @@ export default function Index({
             noDescription: "គ្មានការពណ៌នា",
             deleteConfirm: "តើអ្នកពិតជាចង់លុបអចលនទ្រព្យនេះមែនទេ?",
             flashSuccess: "ប្រតិបត្តិការជោគជ័យ",
+            // Detail Modal Translations
+            propertyDetails: "ព័ត៌មានលម្អិតអចលនទ្រព្យ",
+            descriptionLabel: "ការពណ៌នា",
+            agentInformation: "ព័ត៌មានទីភ្នាក់ងារ",
+            interestedInProperty: "ចាប់អារម្មណ៍នឹងអចលនទ្រព្យនេះ?",
+            yourName: "ឈ្មោះរបស់អ្នក",
+            emailAddress: "អាសយដ្ឋានអ៊ីមែល",
+            phoneNumber: "លេខទូរស័ព្ទ",
+            message: "សារ",
+            sendInquiry: "ផ្ញើការស្នើសុំ",
+            similarProperties: "អចលនទ្រព្យស្រដៀងគ្នា",
+            backToProperties: "ត្រលប់ទៅអចលនទ្រព្យ",
+            close: "បិទ",
+            tellUsMore: "ប្រាប់យើងបន្ថែមអំពីចំណាប់អារម្មណ៍របស់អ្នក...",
         },
     };
 
@@ -297,10 +329,18 @@ export default function Index({
         fetchImageSuggestions(property.type);
     };
 
+    // Open detail modal
+    const openDetailModal = (property) => {
+        setSelectedProperty(property);
+        setShowDetailModal(true);
+    };
+
     // Close modals
     const closeModals = () => {
         setShowCreateModal(false);
         setShowEditModal(false);
+        setShowDetailModal(false);
+        setSelectedProperty(null);
         setEditingProperty(null);
         reset();
     };
@@ -376,6 +416,22 @@ export default function Index({
             "For Rent": t.forRent,
         };
         return statusMap[status] || status;
+    };
+
+    // Get related properties for detail modal
+    const getRelatedProperties = (currentProperty) => {
+        if (!currentProperty || !properties.data) return [];
+
+        return properties.data
+            .filter(
+                (property) =>
+                    property.id !== currentProperty.id &&
+                    (property.type === currentProperty.type ||
+                        property.location.includes(
+                            currentProperty.location.split(",")[0]
+                        ))
+            )
+            .slice(0, 3);
     };
 
     return (
@@ -860,11 +916,12 @@ export default function Index({
 
                                             {/* Action Buttons */}
                                             <div className="flex justify-between items-center pt-4 border-t border-gray-100">
-                                                <Link
-                                                    href={route(
-                                                        "properties.show",
-                                                        property.id
-                                                    )}
+                                                <button
+                                                    onClick={() =>
+                                                        openDetailModal(
+                                                            property
+                                                        )
+                                                    }
                                                     className="text-primary hover:text-primary-dark font-medium flex items-center"
                                                 >
                                                     {t.viewDetails}
@@ -881,7 +938,7 @@ export default function Index({
                                                             d="M14 5l7 7m0 0l-7 7m7-7H3"
                                                         />
                                                     </svg>
-                                                </Link>
+                                                </button>
 
                                                 {canEditProperty(property) && (
                                                     <div className="flex space-x-3">
@@ -1110,7 +1167,7 @@ export default function Index({
                                     >
                                         <path
                                             fillRule="evenodd"
-                                            d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 a1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
+                                            d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 a1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 a1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"
                                             clipRule="evenodd"
                                         />
                                     </svg>
@@ -1579,6 +1636,335 @@ export default function Index({
                                     </PrimaryButton>
                                 </div>
                             </form>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Property Detail Modal */}
+            {showDetailModal && selectedProperty && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center p-4 z-50 overflow-y-auto">
+                    <div className="bg-white rounded-xl shadow-soft max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold text-dark">
+                                    {t.propertyDetails}
+                                </h2>
+                                <div className="flex items-center space-x-4">
+                                    <SecondaryButton onClick={closeModals}>
+                                        {t.close}
+                                    </SecondaryButton>
+                                    {canEditProperty(selectedProperty) && (
+                                        <PrimaryButton
+                                            onClick={() => {
+                                                closeModals();
+                                                openEditModal(selectedProperty);
+                                            }}
+                                        >
+                                            {t.edit}
+                                        </PrimaryButton>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Property Header */}
+                            <div className="relative mb-8">
+                                <img
+                                    src={selectedProperty.image_url}
+                                    alt={selectedProperty.title}
+                                    className="w-full h-96 object-cover rounded-lg"
+                                />
+                                <div className="absolute top-6 right-6 space-y-2">
+                                    <span
+                                        className={`px-4 py-2 rounded-full text-sm font-semibold ${
+                                            selectedProperty.status ===
+                                            "For Sale"
+                                                ? "bg-green-100 text-green-800"
+                                                : "bg-blue-100 text-blue-800"
+                                        }`}
+                                    >
+                                        {getTranslatedStatus(
+                                            selectedProperty.status
+                                        )}
+                                    </span>
+                                    <span className="block px-4 py-2 bg-dark/80 text-white rounded-full text-sm font-semibold">
+                                        {getTranslatedType(
+                                            selectedProperty.type
+                                        )}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Property Details */}
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Main Information */}
+                                <div className="lg:col-span-2">
+                                    <h1 className="text-3xl font-bold text-gray-900 mb-4">
+                                        {selectedProperty.title}
+                                    </h1>
+
+                                    <div className="flex items-center mb-6">
+                                        <svg
+                                            className="h-5 w-5 text-gray-400 mr-2"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            stroke="currentColor"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                                            />
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                                            />
+                                        </svg>
+                                        <span className="text-lg text-gray-600">
+                                            {selectedProperty.location}
+                                        </span>
+                                    </div>
+
+                                    <div className="mb-8">
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                            {t.descriptionLabel}
+                                        </h3>
+                                        <p className="text-gray-600 whitespace-pre-line">
+                                            {selectedProperty.description ||
+                                                t.noDescription}
+                                        </p>
+                                    </div>
+
+                                    {/* Property Features */}
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+                                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                                            <p className="text-sm text-gray-500 mb-2">
+                                                {t.priceLabel}
+                                            </p>
+                                            <p className="text-2xl font-bold text-gray-800">
+                                                {
+                                                    selectedProperty.formatted_price
+                                                }
+                                            </p>
+                                        </div>
+                                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                                            <p className="text-sm text-gray-500 mb-2">
+                                                {t.sizeLabel}
+                                            </p>
+                                            <p className="text-2xl font-bold text-gray-800">
+                                                {
+                                                    selectedProperty.formatted_size
+                                                }
+                                            </p>
+                                        </div>
+                                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                                            <p className="text-sm text-gray-500 mb-2">
+                                                {t.type}
+                                            </p>
+                                            <p className="text-xl font-semibold text-gray-800">
+                                                {getTranslatedType(
+                                                    selectedProperty.type
+                                                )}
+                                            </p>
+                                        </div>
+                                        <div className="text-center p-4 bg-gray-50 rounded-lg">
+                                            <p className="text-sm text-gray-500 mb-2">
+                                                {t.statusLabel}
+                                            </p>
+                                            <p
+                                                className={`text-xl font-semibold ${
+                                                    selectedProperty.status ===
+                                                    "For Sale"
+                                                        ? "text-green-600"
+                                                        : "text-blue-600"
+                                                }`}
+                                            >
+                                                {getTranslatedStatus(
+                                                    selectedProperty.status
+                                                )}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Agent Information */}
+                                    {selectedProperty.user && (
+                                        <div className="bg-gray-50 p-6 rounded-lg">
+                                            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                                {t.agentInformation}
+                                            </h3>
+                                            <div className="flex items-center">
+                                                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                                                    <svg
+                                                        className="h-6 w-6 text-primary"
+                                                        fill="none"
+                                                        viewBox="0 0 24 24"
+                                                        stroke="currentColor"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                        />
+                                                    </svg>
+                                                </div>
+                                                <div className="ml-4">
+                                                    <p className="font-semibold text-gray-800">
+                                                        {
+                                                            selectedProperty
+                                                                .user.name
+                                                        }
+                                                    </p>
+                                                    <p className="text-gray-600">
+                                                        {
+                                                            selectedProperty
+                                                                .user.email
+                                                        }
+                                                    </p>
+                                                    {selectedProperty.user
+                                                        .phone && (
+                                                        <p className="text-gray-600">
+                                                            Phone:{" "}
+                                                            {
+                                                                selectedProperty
+                                                                    .user.phone
+                                                            }
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Sidebar - Inquiry Form & Related Properties */}
+                                <div className="space-y-8">
+                                    {/* Inquiry Form */}
+                                    <div className="bg-primary/5 p-6 rounded-lg border border-primary/10">
+                                        <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                            {t.interestedInProperty}
+                                        </h3>
+                                        <form className="space-y-4">
+                                            <div>
+                                                <label
+                                                    htmlFor="inquiry_name"
+                                                    className="block text-sm font-medium text-gray-700 mb-2"
+                                                >
+                                                    {t.yourName}
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    id="inquiry_name"
+                                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label
+                                                    htmlFor="inquiry_email"
+                                                    className="block text-sm font-medium text-gray-700 mb-2"
+                                                >
+                                                    {t.emailAddress}
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    id="inquiry_email"
+                                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label
+                                                    htmlFor="inquiry_phone"
+                                                    className="block text-sm font-medium text-gray-700 mb-2"
+                                                >
+                                                    {t.phoneNumber}
+                                                </label>
+                                                <input
+                                                    type="tel"
+                                                    id="inquiry_phone"
+                                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                                    required
+                                                />
+                                            </div>
+                                            <div>
+                                                <label
+                                                    htmlFor="inquiry_message"
+                                                    className="block text-sm font-medium text-gray-700 mb-2"
+                                                >
+                                                    {t.message}
+                                                </label>
+                                                <textarea
+                                                    id="inquiry_message"
+                                                    rows="4"
+                                                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                                                    placeholder={t.tellUsMore}
+                                                ></textarea>
+                                            </div>
+                                            <PrimaryButton className="w-full">
+                                                {t.sendInquiry}
+                                            </PrimaryButton>
+                                        </form>
+                                    </div>
+
+                                    {/* Related Properties */}
+                                    {getRelatedProperties(selectedProperty)
+                                        .length > 0 && (
+                                        <div>
+                                            <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                                                {t.similarProperties}
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {getRelatedProperties(
+                                                    selectedProperty
+                                                ).map((related) => (
+                                                    <button
+                                                        key={related.id}
+                                                        onClick={() =>
+                                                            openDetailModal(
+                                                                related
+                                                            )
+                                                        }
+                                                        className="w-full text-left bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                                                    >
+                                                        <div className="flex">
+                                                            <img
+                                                                src={
+                                                                    related.thumbnail_url
+                                                                }
+                                                                alt={
+                                                                    related.title
+                                                                }
+                                                                className="h-20 w-24 object-cover rounded"
+                                                            />
+                                                            <div className="ml-4">
+                                                                <h4 className="font-semibold text-gray-800">
+                                                                    {
+                                                                        related.title
+                                                                    }
+                                                                </h4>
+                                                                <p className="text-sm text-gray-600">
+                                                                    {
+                                                                        related.location
+                                                                    }
+                                                                </p>
+                                                                <p className="text-sm font-bold text-primary">
+                                                                    {
+                                                                        related.formatted_price
+                                                                    }
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

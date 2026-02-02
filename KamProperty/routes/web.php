@@ -48,11 +48,11 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     
-    // Property Routes
+    // Property Routes - ADMIN/AGENT MANAGEMENT
     Route::prefix('properties')->name('properties.')->group(function () {
         // Public property routes (accessible to all authenticated users)
         Route::get('/', [PropertyController::class, 'index'])->name('index');
-        Route::get('/{property}', [PropertyController::class, 'show'])->name('show');
+        Route::get('/{property}', [PropertyController::class, 'adminShow'])->name('show'); // Changed to adminShow
         Route::get('/browse', function () {
             return inertia('Properties/Browse');
         })->name('browse');
@@ -154,7 +154,7 @@ Route::middleware('auth')->group(function () {
         // Browse properties
         Route::get('/properties', [PropertyController::class, 'browse'])->name('properties.browse');
         
-        // View single property (reuse the show method)
-        Route::get('/properties/{property}', [PropertyController::class, 'show'])->name('properties.show');
+        // View single property - use userShow method
+        Route::get('/properties/{property}', [PropertyController::class, 'userShow'])->name('properties.show');
     });
 });
