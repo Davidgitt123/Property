@@ -10,4 +10,10 @@ export default defineConfig({
         }),
         react(),
     ],
+    server: {
+        host: '0.0.0.0', // Listen on all local addresses
+        hmr: {
+            host: 'kamproperty.site', // The tunnel domain
+        },
+    },
 });

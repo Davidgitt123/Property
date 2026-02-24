@@ -19,24 +19,8 @@ export default function Welcome() {
             description: "Lead developer and system architect",
             image: "/images/yondavid.png",
         },
-        {
-            id: 2,
-            khName: "ហាន ទិតធារិត",
-            enName: "Han Tiththearith",
-            studentId: "62744",
-            role: "Backend Developer",
-            description: "Database design and API development",
-            image: "/images/hantiththearith.png",
-        },
-        {
-            id: 3,
-            khName: "ប៊ុត សៀវថុង",
-            enName: "But SeavThong",
-            studentId: "61964",
-            role: "Frontend Developer",
-            description: "UI/UX design and React development",
-            image: "/images/butseavthong.png",
-        },
+        
+        
         {
             id: 4,
             khName: "ឡេង ឆេងលាង",
@@ -44,10 +28,10 @@ export default function Welcome() {
             studentId: "63250",
             role: "Frontend Developer",
             description: "React components and user interface",
-            image: "/images/lengchhangleang.png",
+            image: "/images/chhengleang.jpg",
         },
         {
-            id: 5,
+            id: 2,
             khName: "សុខ សុធា",
             enName: "Sok Sothea",
             studentId: "62746",
@@ -56,13 +40,22 @@ export default function Welcome() {
             image: "/images/soksothea.png",
         },
         {
+            id: 5,
+            khName: "ហាន ទិតធារិត",
+            enName: "Han Tiththearith",
+            studentId: "62744",
+            role: "Backend Developer",
+            description: "Database design and API development",
+            image: "/images/hantiththearith.png",
+        },
+        {
             id: 6,
             khName: "ប៉ាល់ សត្យា",
             enName: "Pal Satya",
             studentId: "61352",
             role: "Documentation & Support",
             description: "Project documentation and user support",
-            image: "/images/palsatya.png",
+            image: "/images/satya.jpg",
         },
         {
             id: 7,

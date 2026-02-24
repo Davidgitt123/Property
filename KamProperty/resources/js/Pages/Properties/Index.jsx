@@ -78,7 +78,6 @@ export default function Index({
             searchProperties: "Search Properties",
             resetFilters: "Reset Filters",
             wide: "Wide",
-            forSale: "For Sale",
             forRent: "For Rent",
             viewDetails: "View Details",
             edit: "Edit",

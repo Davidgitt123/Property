@@ -216,15 +216,11 @@ export default function HomePage({
             role: "Head of Sales",
             image: "/images/hantiththearith.png",
         },
-        {
-            name: "Butseav Thong",
-            role: "Property Manager",
-            image: "/images/butseavthong.png",
-        },
+    
         {
             name: "Leng Chhang Leang",
             role: "Marketing Director",
-            image: "/images/lengchhangleang.png",
+            image: "/images/chhengleang.jpg",
         },
         {
             name: "Sok Sothea",
@@ -234,7 +230,7 @@ export default function HomePage({
         {
             name: "Pal Satya",
             role: "Legal Advisor",
-            image: "/images/palsatya.png",
+            image: "/images/satya.jpg",
         },
     ];
 
